@@ -22,7 +22,7 @@ function App() {
             <Route path="dashboard" element={<AdminDashboard />} />
           </Route>
 
-          <Route path="/user" element={<ProtectedRoute roles={['user']}><UserLayout /></ProtectedRoute>}>
+          <Route path="/user" element={<ProtectedRoute roles={['customer']}><UserLayout /></ProtectedRoute>}>
             <Route path="dashboard" element={<UserDashboard />} />
           </Route>
         </Routes>

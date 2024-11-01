@@ -3,13 +3,13 @@ import { Navigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 
 const ProtectedRoute = ({ children, roles }) => {
-  const { user } = useUser();
-
-  if (!user || (roles && !roles.includes(user.role))) {
-    return <Navigate to="/" />;
+  const { role } = useUser(); 
+  
+  if (!role || (roles && !roles.includes(role))) {
+    return <Navigate to="/" replace />;
   }
 
-  return children; 
+  return children;
 };
 
 export default ProtectedRoute;

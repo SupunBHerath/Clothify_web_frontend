@@ -1,5 +1,5 @@
 import React from 'react';
-import { useUser } from '../context/UserContext';
+import { useUser } from '../../context/UserContext';
 
 const Login = () => {
   const { login } = useUser();
@@ -7,6 +7,7 @@ const Login = () => {
   const handleLogin = (role) => {
     login(role); 
   };
+  
 
   return (
     <div>
