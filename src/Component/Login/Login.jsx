@@ -4,16 +4,17 @@ import { useUser } from '../../context/UserContext';
 const Login = () => {
   const { login } = useUser();
 
-  const handleLogin = (role) => {
-    login(role); 
+  const handleLogin = () => {
+   localStorage.removeItem('token')
+    login(null); 
   };
+  
   
 
   return (
     <div>
-      <h2>Login</h2>
-      <button onClick={() => handleLogin('admin')}>Login as Admin</button>
-      <button onClick={() => handleLogin('user')}>Login as User</button>
+      <h2>logout</h2>
+      <button onClick={() => handleLogin()}>logout</button>
     </div>
   );
 };

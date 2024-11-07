@@ -3,7 +3,7 @@ import { Card } from "antd";
 
 const { Meta } = Card;
 
-const NewArrivalCard = ({ img, name , description , price }) => (
+const ItemCard = ({ img, name , description , price }) => (
   <Card
     hoverable
     className="shadow-lg"
@@ -74,4 +74,4 @@ const NewArrivalCard = ({ img, name , description , price }) => (
   </Card>
 );
 
-export default NewArrivalCard;
+export default ItemCard;
