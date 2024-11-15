@@ -10,35 +10,18 @@ import CardMedia from "@mui/material/CardMedia";
 import { TextField } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ShoppingCartOutlined } from "@ant-design/icons";
-import Badge from "@mui/material/Badge"; // Import Badge
+import Badge from "@mui/material/Badge";
+import ItemCard from "../Card/ItemCard"; 
 
-// Styled component for item container
 const ItemContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  marginBottom: theme.spacing(2), // Space between rows
+  marginBottom: theme.spacing(2),
 }));
 
 export default function ShoppingCardDrawer() {
   const [open, setOpen] = React.useState(false);
-
-  // Sample item data
-  const [items, setItems] = React.useState([
-    {
-      id: 1,
-      name: "Item 1 gjjgkjgjkgk",
-      qty: 1,
-      price: 10.0,
-      img: "https://via.placeholder.com/150",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      qty: 2,
-      price: 20.0,
-      img: "https://via.placeholder.com/150",
-    },
-  ]);
+  const [items, setItems] = React.useState([]);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -50,16 +33,24 @@ export default function ShoppingCardDrawer() {
     setItems(newItems);
   };
 
-  // Calculate total quantity of items
+  const addItemToCart = (newItem) => {
+    setItems((prevItems) => {
+      const existingItemIndex = prevItems.findIndex(
+        (item) => item.name === newItem.name
+      );
+      if (existingItemIndex >= 0) {
+        const updatedItems = [...prevItems];
+        updatedItems[existingItemIndex].qty += 1;
+        return updatedItems;
+      }
+      return [...prevItems, { ...newItem, qty: 1 }];
+    });
+  };
+
   const totalQty = items.reduce((acc, item) => acc + item.qty, 0);
 
   const ItemList = (
-    <Box
-      sx={{ padding: 2 }}
-      style={{ width: "50wh" }}
-      role="presentation"
-      onClick={(event) => event.stopPropagation()} 
-    >
+    <Box sx={{ padding: 2 }} style={{ width: "50wh" }} role="presentation">
       <IconButton
         onClick={toggleDrawer(false)}
         sx={{ position: "absolute", top: 10, right: 10 }}
@@ -71,7 +62,7 @@ export default function ShoppingCardDrawer() {
       </Typography>
       <Divider />
       {items.map((item, index) => (
-        <ItemContainer key={item.id}>
+        <ItemContainer key={index}>
           <CardMedia
             component="img"
             image={item.img}
@@ -81,7 +72,7 @@ export default function ShoppingCardDrawer() {
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="body1">{item.name}</Typography>
             <Typography variant="body2">
-              Price: ${(item.price * item.qty).toFixed(2)} {/* Fixed toFixed */}
+              Price: ${(item.price * item.qty).toFixed(2)}
             </Typography>
           </Box>
           <Box display="flex" alignItems="center">
@@ -91,7 +82,7 @@ export default function ShoppingCardDrawer() {
               -
             </Button>
             <TextField
-              size="small"
+              size="medium"
               value={item.qty}
               inputProps={{ min: 1, style: { textAlign: "center" } }}
               onChange={(e) =>
@@ -110,20 +101,13 @@ export default function ShoppingCardDrawer() {
 
   return (
     <div>
-      <Badge badgeContent={items.length} color="primary"  onClick={toggleDrawer(true)}> 
-        <ShoppingCartOutlined
-          onClick={toggleDrawer(true)}
-          style={{ fontSize: "20px", cursor: 'pointer' }} 
-        />
+      <Badge badgeContent={totalQty} color="primary" onClick={toggleDrawer(true)}>
+        <ShoppingCartOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
       </Badge>
-
-      <Drawer
-        anchor="right"
-        open={open}
-        onClose={toggleDrawer(false)} 
-      >
+      <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
         {ItemList}
       </Drawer>
+     
     </div>
   );
 }

@@ -11,7 +11,6 @@ const NavBar = () => {
   const [visible, setVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Update `isMobile` state based on screen width
   const handleResize = () => {
     setIsMobile(window.innerWidth < 768);
   };

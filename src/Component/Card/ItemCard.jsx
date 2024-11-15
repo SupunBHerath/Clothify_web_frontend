@@ -1,9 +1,10 @@
 import React from "react";
 import { Card } from "antd";
+import { ShoppingCartOutlined } from "@ant-design/icons"; // Importing Ant Design shopping cart icon
 
 const { Meta } = Card;
 
-const ItemCard = ({ img, name , description , price }) => (
+const ItemCard = ({ img, name, description, price }) => (
   <Card
     hoverable
     className="shadow-lg"
@@ -22,6 +23,7 @@ const ItemCard = ({ img, name , description , price }) => (
     cover={
       <div
         style={{
+          position: "relative",
           overflow: "hidden",
           width: "100%",
           height: "300px",
@@ -38,6 +40,29 @@ const ItemCard = ({ img, name , description , price }) => (
             cursor: "pointer",
           }}
         />
+        <div
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
+            borderRadius: "50%",
+            padding: "8px",
+            cursor: "pointer",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "#F68714";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+          }}
+          onClick={() => {
+            console.log({ name, description, price });
+          }}
+        >
+          <ShoppingCartOutlined style={{ color: "white", fontSize: "20px" }} />
+        </div>
       </div>
     }
   >

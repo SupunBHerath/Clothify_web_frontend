@@ -49,7 +49,7 @@ const SecoundNavBar = () => {
 
   return (
     <Layout>
-      <Header style={{ background: '#ffff', display: 'flex', justifyContent: 'center' }}>
+      <Header style={{ background: '#ffff', display: 'flex', justifyContent: 'start' }}>
         <Menu mode="horizontal" style={{ display: 'flex', justifyContent: 'center' }}>
           {categories.map(category => (
             <Dropdown

@@ -5,7 +5,6 @@ import CategorySession1 from '../../Component/CategoryPageComponet/CategorySessi
 export default function CategoryPage() {
   return (
     <div>
-      <br /><br />
       <CategorySession1/>
     </div>
   )
