@@ -54,7 +54,6 @@ const NavBar = () => {
           CLOTHIFY STORE
         </Title>
 
-        {/* Display either desktop nav or mobile menu based on `isMobile` state */}
         {isMobile ? (
           <>
             <div
