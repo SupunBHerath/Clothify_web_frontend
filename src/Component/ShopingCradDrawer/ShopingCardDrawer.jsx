@@ -15,6 +15,7 @@ import CardMedia from "@mui/material/CardMedia";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { ShoppingCartOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const DrawerContent = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -53,7 +54,7 @@ export default function ShoppingCardDrawer() {
   const dispatch = useDispatch();
   const items = useSelector((state) => state.cart);
   const cartLength = useSelector((state) => state.cart.length);
-
+  const navigate = useNavigate();
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
@@ -68,10 +69,10 @@ export default function ShoppingCardDrawer() {
   const handleRemoveItem = (id, size) => {
     dispatch({
       type: "REMOVE_FROM_CART",
-      payload: { id,size },
+      payload: { id, size },
     });
   };
-  
+
 
   const totalQty = items.reduce((acc, item) => acc + item.qty, 0);
 
@@ -87,72 +88,73 @@ export default function ShoppingCardDrawer() {
       </Header>
       <Divider />
       {items.length > 0 ? (
-  items.map((item, index) => (
-    <ItemContainer key={`${item.id}-${item.selectedSize}`}>
-      <CardMedia
-        component="img"
-        image={item?.images[0]}
-        alt={item.name}
-        sx={{ width: 60, height: 60, borderRadius: 1, marginRight: 2 }}
-      />
-      <Box sx={{ flex: 1 }}>
-        <Typography variant="body1" noWrap>
-          {item.name}
+        items.map((item, index) => (
+          <ItemContainer key={`${item.id}-${item.selectedSize}`}>
+            <CardMedia
+              component="img"
+              image={item?.images[0].url}
+              alt={item.name}
+              sx={{ width: 60, height: 60, borderRadius: 1, marginRight: 2 }}
+            />
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="body1" noWrap>
+                {item.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Rs {(item?.selectedSize?.price * item.qty).toFixed(2)}
+              </Typography>
+              <Box display="flex" alignItems="center" mt={1}>
+                <Button
+                  size="small"
+                  onClick={() => handleQtyChange(index, item.qty - 1)}
+                  sx={{ minWidth: "30px" }}
+                >
+                  -
+                </Button>
+                <TextField
+                  size="small"
+                  value={item.qty}
+                  inputProps={{ min: 1, style: { textAlign: "center" } }}
+                  onChange={(e) =>
+                    handleQtyChange(index, Math.max(1, Number(e.target.value)))
+                  }
+                  sx={{ mx: 1, width: "50px" }}
+                />
+                <Button
+                  size="small"
+                  onClick={() => handleQtyChange(index, item.qty + 1)}
+                  sx={{ minWidth: "30px" }}
+                >
+                  +
+                </Button>
+              </Box>
+            </Box>
+            <IconButton
+              onClick={() => handleRemoveItem(item.id, item.selectedSize.name)}
+              color="error"
+              aria-label="remove"
+              sx={{ marginLeft: 2 }}
+            >
+              <DeleteOutlineIcon />
+            </IconButton>
+          </ItemContainer>
+        ))
+      ) : (
+        <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center", mt: 4 }}>
+          Your cart is empty
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          ${(item?.selectedSize?.price * item.qty).toFixed(2)}
-        </Typography>
-        <Box display="flex" alignItems="center" mt={1}>
-          <Button
-            size="small"
-            onClick={() => handleQtyChange(index, item.qty - 1)}
-            sx={{ minWidth: "30px" }}
-          >
-            -
-          </Button>
-          <TextField
-            size="small"
-            value={item.qty}
-            inputProps={{ min: 1, style: { textAlign: "center" } }}
-            onChange={(e) =>
-              handleQtyChange(index, Math.max(1, Number(e.target.value)))
-            }
-            sx={{ mx: 1, width: "50px" }}
-          />
-          <Button
-            size="small"
-            onClick={() => handleQtyChange(index, item.qty + 1)}
-            sx={{ minWidth: "30px" }}
-          >
-            +
-          </Button>
-        </Box>
-      </Box>
-      <IconButton
-        onClick={() => handleRemoveItem(item.id, item.selectedSize.name)}
-        color="error"
-        aria-label="remove"
-        sx={{ marginLeft: 2 }}
-      >
-        <DeleteOutlineIcon />
-      </IconButton>
-    </ItemContainer>
-  ))
-) : (
-  <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center", mt: 4 }}>
-    Your cart is empty
-  </Typography>
-)}
+      )}
 
       {items.length > 0 && (
         <Footer>
           <Typography variant="subtitle1" sx={{ mb: 1 }}>
-            Total: ${totalPrice}
+            Total: Rs {totalPrice}
           </Typography>
           <Button
             variant="contained"
             color="primary"
             fullWidth
+            onClick={()=>{navigate("/checkout")}}
             sx={{ padding: "10px 0" }}
           >
             Proceed to Checkout

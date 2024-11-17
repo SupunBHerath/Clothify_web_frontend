@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Autocomplete,
   TextField,
@@ -13,40 +13,41 @@ import {
 } from "@mui/material";
 import ItemCard from "../Card/ItemCard";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import { getProduct } from "../../Service/ProductApi";
+import { message } from "antd";
+// {
+//   id: 1,
+//   name: "Product 1",
+//   category: "Women",
+//   subCategory: "Casual",
+//   sizes: [
+//     { name: "S", price: 1500 },
+//     { name: "M", price: 2000 },
+//   ],
+// },
+// {
+//   id: 2,
+//   name: "Classic Sneakers",
+//   description: "Timeless style",
+//   subCategory: "Sneakers",
+//   images: [
+//     "https://via.placeholder.com/400",
+//     "https://via.placeholder.com/100",
+//     "https://via.placeholder.com/300",
+//   ],
+//   sizes: [
+//     { name: "S", price: 1500.0 },
+//     { name: "M", price: 1800.0 },
+//     { name: "L", price: 2100.0 },
+//   ],
+//   category: "Men",
+// },
+// const productData = [
 
-const productData = [
-  {
-    id: 1,
-    name: "Product 1",
-    category: "Women",
-    subCategory: "Casual",
-    sizes: [
-      { name: "S", price: 1500 },
-      { name: "M", price: 2000 },
-    ],
-  },
-  {
-    id: 2,
-    name: "Classic Sneakers",
-    description: "Timeless style",
-    subCategory: "Sneakers",
-    images: [
-      "https://via.placeholder.com/400",
-      "https://via.placeholder.com/100",
-      "https://via.placeholder.com/300",
-    ],
-    sizes: [
-      { name: "S", price: 1500.0 },
-      { name: "M", price: 1800.0 },
-      { name: "L", price: 2100.0 },
-    ],
-    category: "Men",
-  },
-];
+// ];
 
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
-const categoryOptions = [...new Set(productData.map((item) => item.category))];
-const tagOptions = [...new Set(productData.flatMap((item) => item.subCategory))];
+
 
 export default function CategorySession1() {
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -54,13 +55,32 @@ export default function CategorySession1() {
   const [selectedSize, setSelectedSize] = useState("");
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [productData, setProductData] = useState([]);
+  useEffect(() => {
+    const getProdutData = async () => {
+      const response = await getProduct();
+      const result = response.data;
+      if(result.length>0){
+          setProductData(result)
+          
+      }else{
+        message.warning("Producrs not found ...")
+      }
+      
+     
+    }
+    getProdutData()
+  }, [])
+  const categoryOptions = [...new Set(productData.map((item) => item.category))];
+  const tagOptions = [...new Set(productData.flatMap((item) => item.subCategory))];
 
   const handlePriceChange = (event, newValue) => setPriceRange(newValue);
 
   const filteredItems = productData.filter(
     (item) =>
       (!selectedCategory || item.category === selectedCategory) &&
-      (selectedsubCategory.length === 0 || selectedsubCategory.every((tag) => item.subCategory.includes(tag))) &&
+      (selectedsubCategory.length === 0 ||
+        selectedsubCategory.every((tag) => item.subCategory.includes(tag))) &&
       (!selectedSize || item.sizes.some((size) => size.name === selectedSize)) &&
       item.sizes.some(
         (size) => size.price >= priceRange[0] && size.price <= priceRange[1]

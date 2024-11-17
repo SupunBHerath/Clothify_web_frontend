@@ -9,28 +9,30 @@ import Home from './pages/Home';
 import { UserProvider, useUser } from './context/UserContext';
 import ProtectedRoute from './Component/ProtectedRoute/ProtectedRoute';
 import CategoryPage from './pages/User/CategoryPage';
+import AddProductForm from './Component/AddProduct/AddProductForm';
+import Checkout from './Component/Checkout/Checkout';
 
 const AppRoutes = () => {
   const { role, loading } = useUser();
   const navigate = useNavigate();
   
-  useEffect(() => {
-    if (!loading) {
-      const pathname = window.location.pathname;
+  // useEffect(() => {
+  //   if (!loading) {
+  //     const pathname = window.location.pathname;
 
-      if (role === 'admin') {
-        if (pathname !== '/admin/dashboard') {
-          navigate('/admin/dashboard', { replace: true });
-        }
-      } else if (role === 'customer') {
-        if (pathname !== '/user/dashboard' && pathname !== '/user/d') {
-          navigate('/user/dashboard', { replace: true });
-        }
-      } else {
-        navigate('/', { replace: true });
-      }
-    }
-  }, [role, loading, navigate]);
+  //     if (role === 'admin') {
+  //       if (pathname !== '/admin/dashboard') {
+  //         navigate('/admin/dashboard', { replace: true });
+  //       }
+  //     } else if (role === 'customer') {
+  //       if (pathname !== '/user/dashboard' && pathname !== '/user/d') {
+  //         navigate('/user/dashboard', { replace: true });
+  //       }
+  //     } else {
+  //       navigate('/', { replace: true });
+  //     }
+  //   }
+  // }, [role, loading, navigate]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -40,6 +42,8 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<UserLayout />}>
         <Route index element={<CategoryPage />} />
+        <Route path='add' element={<AddProductForm />} />
+        <Route path='checkout' element={<Checkout />} />
       </Route>
       <Route path="/admin/*" element={<ProtectedRoute roles={['admin']}><AdminLayout /></ProtectedRoute>}>
         <Route path="dashboard" element={<AdminDashboard />} />
@@ -55,6 +59,7 @@ const AppRoutes = () => {
 
 function App() {
   return (
+    
     <UserProvider>
       <Router>
         <AppRoutes />

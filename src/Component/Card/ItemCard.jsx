@@ -107,7 +107,7 @@ const ItemCard = ({ product }) => {
           <div style={styles.imageContainer}>
             <img
               alt="Product"
-              src={product?.images?.[0]}
+              src={product?.images[0]?.url}
               style={styles.image}
               onClick={handleDialogOpen}
             />
@@ -160,7 +160,6 @@ const ItemCard = ({ product }) => {
         </button>
       </Card>
 
-      {/* Product Dialog */}
       {dialogOpen && (
         <ProductDialog open={dialogOpen} product={product} onClose={handleDialogClose} />
       )}

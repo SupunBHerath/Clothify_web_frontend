@@ -16,7 +16,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from "react-redux";
 
 const ProductDialog = ({ open, onClose, product }) => {
-  const [mainImage, setMainImage] = useState(product.images[0]);
+  const [mainImage, setMainImage] = useState(product.images[0].url);
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
@@ -91,9 +91,9 @@ const ProductDialog = ({ open, onClose, product }) => {
               {product.images.map((image, index) => (
                 <img
                   key={index}
-                  src={image}
+                  src={image.url}
                   alt={`Thumbnail ${index + 1}`}
-                  onClick={() => handleThumbnailClick(image)}
+                  onClick={() => handleThumbnailClick(image.url)}
                   style={{
                     width: "80px",
                     height: "80px",
