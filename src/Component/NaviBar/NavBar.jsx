@@ -3,6 +3,7 @@ import { Layout, Typography, Button, Space, Drawer } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import LoginDrawer from "../DrawerLogin/DrawerLogin";
 import ShopingCardDrawer from "../ShopingCradDrawer/ShopingCardDrawer";
+import { useNavigate } from "react-router-dom";
 
 const { Header } = Layout;
 const { Title } = Typography;
@@ -10,7 +11,7 @@ const { Title } = Typography;
 const NavBar = () => {
   const [visible, setVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
+  const navigate = useNavigate()
   const handleResize = () => {
     setIsMobile(window.innerWidth < 768);
   };
@@ -49,6 +50,8 @@ const NavBar = () => {
       >
         <Title
           level={4}
+          onClick={()=>{navigate("/")}}
+
           style={{ color: "white", margin: 0, fontWeight: "900" }}
         >
           CLOTHIFY STORE
@@ -102,6 +105,7 @@ const NavBar = () => {
               <Space style={{ marginRight: "20px" }}>
                 <Button
                   type="link"
+                  onClick={()=>{navigate("/category")}}
                   style={{ color: "white", fontWeight: "700", fontSize: 18 }}
                 >
                   Category
@@ -118,9 +122,11 @@ const NavBar = () => {
               <Space style={{ marginRight: "20px" }}>
                 <Button
                   type="link"
+                  onClick={()=>{navigate("/profile")}}
+
                   style={{ color: "white", fontWeight: "700", fontSize: 18 }}
                 >
-                  Discount
+                  Profile
                 </Button>
               </Space>
               <Space style={{ marginRight: "20px" }}>
@@ -164,10 +170,9 @@ const NavBar = () => {
 
       <Drawer
         title="Menu"
-        placement="left"
+        placement="right"
         onClose={onClose}
         visible={visible}
-        style={{ maxWidth: "80%" }}
       >
         
         <Space direction="vertical" >

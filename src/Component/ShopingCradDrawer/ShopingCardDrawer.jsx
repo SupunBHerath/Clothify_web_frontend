@@ -72,7 +72,10 @@ export default function ShoppingCardDrawer() {
       payload: { id, size },
     });
   };
-
+  const handleButtonClick = () => {
+   setOpen(false)
+    navigate("/checkout");
+  };
 
   const totalQty = items.reduce((acc, item) => acc + item.qty, 0);
 
@@ -154,7 +157,7 @@ export default function ShoppingCardDrawer() {
             variant="contained"
             color="primary"
             fullWidth
-            onClick={()=>{navigate("/checkout")}}
+            onClick={handleButtonClick}
             sx={{ padding: "10px 0" }}
           >
             Proceed to Checkout

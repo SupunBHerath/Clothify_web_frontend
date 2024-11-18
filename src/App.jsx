@@ -11,6 +11,7 @@ import ProtectedRoute from './Component/ProtectedRoute/ProtectedRoute';
 import CategoryPage from './pages/User/CategoryPage';
 import AddProductForm from './Component/AddProduct/AddProductForm';
 import Checkout from './Component/Checkout/Checkout';
+import Dashboard from './Component/ProfileComporent/Dashboard';
 
 const AppRoutes = () => {
   const { role, loading } = useUser();
@@ -41,7 +42,10 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<UserLayout />}>
-        <Route index element={<CategoryPage />} />
+        <Route index element={<Home />} />
+
+        <Route path='category' element={<CategoryPage />} />
+        <Route path='profile' element={<Dashboard />} />
         <Route path='add' element={<AddProductForm />} />
         <Route path='checkout' element={<Checkout />} />
       </Route>

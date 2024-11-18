@@ -29,7 +29,6 @@ const CheckoutPage = () => {
     });
     const [errors, setErrors] = useState({});
 
-    // Fetching cart data from Redux store
     const items = useSelector((state) => state.cart);
 
     const steps = ["Shipping Details", "Payment Information", "Review & Place Order"];
@@ -73,7 +72,6 @@ const CheckoutPage = () => {
                 Checkout
             </Typography>
 
-            {/* Stepper */}
             <Stepper activeStep={activeStep} alternativeLabel sx={{ marginBottom: 4 }}>
                 {steps.map((label) => (
                     <Step key={label}>
@@ -82,7 +80,6 @@ const CheckoutPage = () => {
                 ))}
             </Stepper>
 
-            {/* Step Content */}
             <Card sx={{ padding: 4, boxShadow: 5, borderRadius: 2 }}>
                 {activeStep === 0 && (
                     <Box>
