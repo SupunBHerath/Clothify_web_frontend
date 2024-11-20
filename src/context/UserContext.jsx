@@ -6,6 +6,7 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [role, setRole] = useState(null);
   const [cusId, setcusId] = useState(null);
+  const[email,setEmail] = useState(null)
   const [loading, setLoading] = useState(true);
   const [isLogin, setIsLoging] = useState(false)
   useEffect(() => {
@@ -16,6 +17,8 @@ export const UserProvider = ({ children }) => {
         console.log(decodedToken);
         const userRole = decodedToken.data?.role;
         const id = decodedToken.data?.id;
+        const emailJwt = decodedToken.data?.email;
+        setEmail(emailJwt)
         setRole(userRole);
         setcusId(id);
         setIsLoging(true);
@@ -41,7 +44,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ role,isLogin, loading, login, logout,cusId }}>
+    <UserContext.Provider value={{ role,isLogin, loading, login, logout,cusId,email }}>
       {children}
     </UserContext.Provider>
   );

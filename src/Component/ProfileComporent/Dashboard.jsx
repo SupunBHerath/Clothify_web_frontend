@@ -11,14 +11,14 @@ import { useNavigate } from "react-router-dom";
 import { message } from "antd";
 
 const Dashboard = () => {
-    const [activeComponent, setActiveComponent] = useState("MyProfile");
+    const [activeComponent, setActiveComponent] = useState("MyOrders");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const { logout ,cusId } = useUser();
+    const { logout ,cusId,email } = useUser();
     const navigate = useNavigate()
     const renderComponent = () => {
         switch (activeComponent) {
             case "MyProfile":
-                return <MyProfile cusID={cusId} />;
+                return <MyProfile cusID={cusId}  email={email}/>;
             case "MyOrders":
                 return <MyOrders cusID={cusId} />;
             case "MyAddresses":
@@ -31,10 +31,10 @@ const Dashboard = () => {
     };
 
     const menuItems = [
-        { label: "My Profile", value: "MyProfile" },
         { label: "My Orders", value: "MyOrders" },
-        { label: "My Addresses", value: "MyAddresses" },
+        // { label: "My Addresses", value: "MyAddresses" },
         { label: "My Wishlist", value: "MyWishlist" },
+        { label: "My Profile", value: "MyProfile" },
         { label: "Logout", value: "Logout" },
     ];
 
