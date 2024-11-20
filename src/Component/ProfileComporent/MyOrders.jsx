@@ -91,7 +91,7 @@ function Row(props) {
     );
 }
 
-// const rows = [
+
 //     createData(
 //         3,
 //         100,

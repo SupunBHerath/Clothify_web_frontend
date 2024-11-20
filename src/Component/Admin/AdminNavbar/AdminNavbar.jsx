@@ -17,17 +17,16 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import Dashboard from '@mui/icons-material/Dashboard';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import Badge from '@mui/material/Badge';
-import CollectionsIcon from '@mui/icons-material/Collections';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link, useNavigate } from 'react-router-dom';
-import EventNoteIcon from '@mui/icons-material/EventNote';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import AdminDashboard from '../AdminDashboard/AdminDashboard';
 import OrderTable from '../OrderTable/OrderTable';
 import UserTable from '../UserTable/UserTable';
-
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import CategoryIcon from '@mui/icons-material/Category';
+import ProductTable from '../ProductTable/ProductTable';
+import { Badge } from '@mui/material';
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -121,35 +120,29 @@ export default function AdminNavbar() {
     setTite('Welcome to Admin Dashboard');
   };
 
-  const lecher = () => {
-    setActiveComponent('lecher');
-    setTite('Lecturers Table ');
+  const handleOrder = () => {
+    setActiveComponent('order');
+    setTite('Order Details ');
   };
 
-  const timetable = () => {
-    setActiveComponent('timetable');
-
+  const product = () => {
+    setActiveComponent('product');
+    setTite('Product Details ');
   };
 
-  const gallery = () => {
-    setActiveComponent('gallery');
-    setTite('Gallery');
+ 
+
+  const users = () => {
+    setActiveComponent('user');
+    setTite('User Details');
   };
 
-  const staff = () => {
-    setActiveComponent('staff');
-    setTite('Staff Details');
-  };
-
-  const timeTable = () => {
-    setActiveComponent('timeTable');
-    setTite('TimeTables ');
-  };
+ 
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} className='text-bg-secondary'>
+      <AppBar position="fixed" open={open} className='' style={{backgroundColor:"#f68714"}}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -164,7 +157,7 @@ export default function AdminNavbar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" className='w-100'>
-            <div className="text-center w-100" >
+            <div className="text-center w-100 fw-bold" >
               <h2 >{title}    </h2>
            
             </div>
@@ -173,13 +166,13 @@ export default function AdminNavbar() {
       </AppBar>
       <Drawer variant="permanent" open={open} >
         <DrawerHeader>
-          <Typography className='mx-5 w-100'
+          <Typography className='mx-4 w-100 fw-bold'
             variant="h6"
             noWrap
             component="div"
             sx={{ display: { xs: 'block', sm: 'block' } }}
             >
-            SASIP
+            CLOTHIFY
           </Typography>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -200,41 +193,31 @@ export default function AdminNavbar() {
             <ListItemText primary={<span >Dashboard</span>} sx={activeComponent === 'dashboard' ? { color: "#f68714"} : {}} />
           </ListItemButton>
           <br /><br />
-          <ListItemButton onClick={lecher}>
+          <ListItemButton onClick={handleOrder}>
             <ListItemIcon>
-              <ManageAccountsIcon sx={activeComponent === 'lecher' ? { color: "#f68714"} : {}} />
+              <ShoppingCartIcon sx={activeComponent === 'order' ? { color: "#f68714"} : {}} />
             </ListItemIcon>
-            <ListItemText primary={<span >Lecturers</span>} sx={activeComponent === 'lecher' ? { color: "#f68714"} : {}} />
+            <ListItemText primary={<span >Order Details</span>} sx={activeComponent === 'order' ? { color: "#f68714"} : {}} />
           </ListItemButton>
           <br /><br />
-          <ListItemButton onClick={timeTable}>
+          <ListItemButton onClick={product}>
             <ListItemIcon>
-              <EventNoteIcon sx={activeComponent === 'timeTable' ? { color: "#f68714"} : {}} />
+              <CategoryIcon sx={activeComponent === 'product' ? { color: "#f68714"} : {}} />
             </ListItemIcon>
-            <ListItemText primary={<span >Time Table</span>} sx={activeComponent === 'timeTable' ? { color: "#f68714"} : {}} />
+            <ListItemText primary={<span >Product Details</span>} sx={activeComponent === 'product' ? { color: "#f68714"} : {}} />
           </ListItemButton>
           <br /><br />
-          <ListItemButton onClick={staff}>
+          <ListItemButton onClick={users}>
             <ListItemIcon>
               <Badge badgeContent={row} color="success">
-                <PeopleOutlineIcon sx={activeComponent === 'staff' ? { color: "#f68714"} : {}} />
+                <PeopleOutlineIcon sx={activeComponent === 'users' ? { color: "#f68714"} : {}} />
               </Badge>
             </ListItemIcon>
-            <ListItemText primary={<span >Staff Details</span>} sx={activeComponent === 'staff' ? { color: "#f68714"} : {}} />
+            <ListItemText primary={<span >User Details</span>} sx={activeComponent === 'users' ? { color: "#f68714"} : {}} />
           </ListItemButton>
           <br /><br />
-          <ListItemButton onClick={gallery}>
-            <ListItemIcon>
-              <Badge >
-                <CollectionsIcon sx={activeComponent === 'gallery' ? { color: "#f68714"} : {}} />
-              </Badge>
-            </ListItemIcon>
-            <ListItemText primary={<span >Gallery</span>} sx={activeComponent === 'gallery' ? { color: "#f68714"} : {}} />
-          </ListItemButton>
-          <br /><br />
-       
-       
-          <ListItemButton onClick={handleLogout} >
+          <hr />
+          <ListItemButton onClick={handleLogout}  style={{ flexShrink: 0}}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
@@ -245,6 +228,7 @@ export default function AdminNavbar() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         {activeComponent === 'dashboard' && <AdminDashboard />}
+        {activeComponent === 'product' && <ProductTable />}
         {activeComponent === 'order' && <OrderTable />}
         {activeComponent === 'user' && <UserTable />}
       </Box>
