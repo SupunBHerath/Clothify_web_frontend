@@ -8,10 +8,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { getProduct } from '../../Service/ProductApi';
+import { getOrdersById } from '../../Service/OrderApi';
 
 const columns = [
-  { id: 'oid', label: 'Order ID', minWidth: 50 },
+  { id: 'oid', label: 'Order ID', minWidth: 10 },
   { id: 'date', label: 'Date', minWidth: 100 },
   {
     id: 'name',
@@ -23,34 +23,40 @@ const columns = [
   {
     id: 'size',
     label: 'Size',
-    minWidth: 50,
+    minWidth: 10,
     align: 'left',
     format: (value) => value.toLocaleString('en-US'),
   },
   {
     id: 'qty',
     label: 'Qty',
-    minWidth: 50,
+    minWidth: 10,
     align: 'lef',
   },
   {
     id: 'price',
     label: 'Price',
     minWidth: 100,
-    align: 'right',
+    align: 'left',
     format: (value) => value.toFixed(2),
+  },
+  {
+    id: 'address',
+    label: 'Address',
+    minWidth: 200,
+    align: 'left',
   },
   {
     id: 'status',
     label: 'Status',
-    minWidth: 100,
-    align: 'right',
-    format: (value) => value.toFixed(2),
-  },
+    minWidth: 50,
+    align: 'left',
+  }
+ 
 ];
 
-function createData(oid, date, name, size,qty,price,status) {
-  return { oid, date, name, size, qty,price,status };
+function createData(oid, date, name, size,qty,price,address,status) {
+  return { oid, date, name, size, qty,price,address,status};
 }
 
 
@@ -63,12 +69,13 @@ export default function MyOrders() {
   React.useEffect(() => {
     const getProductData = async () => {
       try {
-        const res = await getProduct(); 
+        const res = await getOrdersById(100); 
         const data = res.data;
+console.log(data);
 
         if (data.length > 0) {
           const formattedRows = data.map(item =>
-            createData(item.id, item.date, item.name, item.size, item.qty, item.price, item.status)
+            createData(item.id, item.date, item.productName, item.productSize, item.qty, item.price, item.cusAddress, item.status)
           );
           setRows(formattedRows); 
         }
@@ -114,7 +121,7 @@ export default function MyOrders() {
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
-                        <TableCell key={column.id} align={column.align}>
+                        <TableCell key={column.id} align={column.align} >
                           {column.format && typeof value === 'number'
                             ? column.format(value)
                             : value}

@@ -14,10 +14,12 @@ import {
     Grid,
     TextField,
 } from "@mui/material";
+import { createOrders } from "../../Service/OrderApi";
+import { message } from "antd";
 
 const CheckoutPage = () => {
     const [activeStep, setActiveStep] = useState(0);
-    const [formData, setFormData] = useState({
+    const [fData, setfData] = useState({
         fullName: "",
         address: "",
         city: "",
@@ -30,6 +32,7 @@ const CheckoutPage = () => {
     const [errors, setErrors] = useState({});
 
     const items = useSelector((state) => state.cart);
+    console.log(items);
 
     const steps = ["Shipping Details", "Payment Information", "Review & Place Order"];
 
@@ -40,15 +43,15 @@ const CheckoutPage = () => {
     const validateStep = () => {
         let tempErrors = {};
         if (activeStep === 0) {
-            if (!formData.fullName) tempErrors.fullName = "Full name is required.";
-            if (!formData.address) tempErrors.address = "Address is required.";
-            if (!formData.city) tempErrors.city = "City is required.";
-            if (!formData.postalCode) tempErrors.postalCode = "Postal code is required.";
-            if (!formData.phone) tempErrors.phone = "Phone number is required.";
+            if (!fData.fullName) tempErrors.fullName = "Full name is required.";
+            if (!fData.address) tempErrors.address = "Address is required.";
+            if (!fData.city) tempErrors.city = "City is required.";
+            if (!fData.postalCode) tempErrors.postalCode = "Postal code is required.";
+            if (!fData.phone) tempErrors.phone = "Phone number is required.";
         } else if (activeStep === 1) {
-            if (!formData.cardNumber) tempErrors.cardNumber = "Card number is required.";
-            if (!formData.expiryDate) tempErrors.expiryDate = "Expiry date is required.";
-            if (!formData.cvv) tempErrors.cvv = "CVV is required.";
+            if (!fData.cardNumber) tempErrors.cardNumber = "Card number is required.";
+            if (!fData.expiryDate) tempErrors.expiryDate = "Expiry date is required.";
+            if (!fData.cvv) tempErrors.cvv = "CVV is required.";
         }
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
@@ -63,9 +66,29 @@ const CheckoutPage = () => {
     const handleBack = () => setActiveStep((prev) => prev - 1);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setfData({ ...fData, [e.target.name]: e.target.value });
     };
+    const handleSave = async() => {
 
+        const jsonArray = items.map((item) => ({
+            cusId: 101,
+            productId: item.id,
+            cusAddress: fData.address + "," + fData.city,
+            postalCode: fData.postalCode,
+            phoneNumber: fData.phone,
+            productName: item.name,
+            productSize: item.selectedSize.name,
+            price: item.selectedSize.price * item.qty,
+            qty: item.qty,
+            date: new Date().toISOString().split('T')[0],
+            status: "Pending"
+        }));
+        const formData = JSON.stringify(jsonArray, null, 2)
+        console.log( jsonArray);
+        const res = await createOrders(jsonArray);
+        const result = res.data;
+        message.success(result,3)
+    }
     return (
         <Container maxWidth="md" sx={{ marginTop: 4, marginBottom: 4 }}>
             <Typography variant="h4" align="center" gutterBottom>
@@ -93,7 +116,7 @@ const CheckoutPage = () => {
                                     fullWidth
                                     label="Full Name"
                                     name="fullName"
-                                    value={formData.fullName}
+                                    value={fData.fullName}
                                     onChange={handleChange}
                                     error={!!errors.fullName}
                                     helperText={errors.fullName}
@@ -104,7 +127,7 @@ const CheckoutPage = () => {
                                     fullWidth
                                     label="Street Address"
                                     name="address"
-                                    value={formData.address}
+                                    value={fData.address}
                                     onChange={handleChange}
                                     error={!!errors.address}
                                     helperText={errors.address}
@@ -115,7 +138,7 @@ const CheckoutPage = () => {
                                     fullWidth
                                     label="City"
                                     name="city"
-                                    value={formData.city}
+                                    value={fData.city}
                                     onChange={handleChange}
                                     error={!!errors.city}
                                     helperText={errors.city}
@@ -126,7 +149,7 @@ const CheckoutPage = () => {
                                     fullWidth
                                     label="Postal Code"
                                     name="postalCode"
-                                    value={formData.postalCode}
+                                    value={fData.postalCode}
                                     onChange={handleChange}
                                     error={!!errors.postalCode}
                                     helperText={errors.postalCode}
@@ -137,7 +160,7 @@ const CheckoutPage = () => {
                                     fullWidth
                                     label="Phone Number"
                                     name="phone"
-                                    value={formData.phone}
+                                    value={fData.phone}
                                     onChange={handleChange}
                                     error={!!errors.phone}
                                     helperText={errors.phone}
@@ -159,7 +182,7 @@ const CheckoutPage = () => {
                                     fullWidth
                                     label="Card Number"
                                     name="cardNumber"
-                                    value={formData.cardNumber}
+                                    value={fData.cardNumber}
                                     onChange={handleChange}
                                     error={!!errors.cardNumber}
                                     helperText={errors.cardNumber}
@@ -170,7 +193,7 @@ const CheckoutPage = () => {
                                     fullWidth
                                     label="Expiry Date"
                                     name="expiryDate"
-                                    value={formData.expiryDate}
+                                    value={fData.expiryDate}
                                     onChange={handleChange}
                                     error={!!errors.expiryDate}
                                     helperText={errors.expiryDate}
@@ -181,7 +204,7 @@ const CheckoutPage = () => {
                                     fullWidth
                                     label="CVV"
                                     name="cvv"
-                                    value={formData.cvv}
+                                    value={fData.cvv}
                                     onChange={handleChange}
                                     error={!!errors.cvv}
                                     helperText={errors.cvv}
@@ -202,10 +225,10 @@ const CheckoutPage = () => {
                                 key={index}
                                 sx={{
                                     display: "flex",
-                                    flexDirection: { xs: "column", md: "row" }, 
+                                    flexDirection: { xs: "column", md: "row" },
                                     alignItems: "center",
                                     justifyContent: "space-between",
-                                    gap: 2, 
+                                    gap: 2,
                                     marginBottom: 2,
                                 }}
                             >
@@ -213,7 +236,7 @@ const CheckoutPage = () => {
                                 <Box
                                     sx={{
                                         flexShrink: 0,
-                                        textAlign: { xs: "center", md: "left" }, 
+                                        textAlign: { xs: "center", md: "left" },
                                     }}
                                 >
                                     <img
@@ -222,7 +245,7 @@ const CheckoutPage = () => {
                                         width={80}
                                         style={{
                                             maxWidth: "100%",
-                                            height: "auto",  
+                                            height: "auto",
                                         }}
                                     />
                                 </Box>
@@ -230,8 +253,8 @@ const CheckoutPage = () => {
                                 {/* Text Section */}
                                 <Box
                                     sx={{
-                                        textAlign: { xs: "left", md: "left" }, 
-                                        flex: 1, 
+                                        textAlign: { xs: "left", md: "left" },
+                                        flex: 1,
                                     }}
                                 >
                                     <Typography variant="body1">{item.name}</Typography>
@@ -270,7 +293,7 @@ const CheckoutPage = () => {
                             Next
                         </Button>
                     ) : (
-                        <Button variant="contained" color="primary">
+                        <Button variant="contained" color="primary" onClick={handleSave}>
                             Place Order
                         </Button>
                     )}

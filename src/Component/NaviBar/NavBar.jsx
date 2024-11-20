@@ -50,7 +50,7 @@ const NavBar = () => {
       >
         <Title
           level={4}
-          onClick={()=>{navigate("/")}}
+          onClick={() => { navigate("/") }}
 
           style={{ color: "white", margin: 0, fontWeight: "900" }}
         >
@@ -105,7 +105,16 @@ const NavBar = () => {
               <Space style={{ marginRight: "20px" }}>
                 <Button
                   type="link"
-                  onClick={()=>{navigate("/category")}}
+                  onClick={() => { navigate("/") }}
+                  style={{ color: "white", fontWeight: "700", fontSize: 18 }}
+                >
+                  Home
+                </Button>
+              </Space>
+              <Space style={{ marginRight: "20px" }}>
+                <Button
+                  type="link"
+                  onClick={() => { navigate("/category") }}
                   style={{ color: "white", fontWeight: "700", fontSize: 18 }}
                 >
                   Category
@@ -114,15 +123,7 @@ const NavBar = () => {
               <Space style={{ marginRight: "20px" }}>
                 <Button
                   type="link"
-                  style={{ color: "white", fontWeight: "700", fontSize: 18 }}
-                >
-                  New Arrival
-                </Button>
-              </Space>
-              <Space style={{ marginRight: "20px" }}>
-                <Button
-                  type="link"
-                  onClick={()=>{navigate("/profile")}}
+                  onClick={() => { navigate("/profile") }}
 
                   style={{ color: "white", fontWeight: "700", fontSize: 18 }}
                 >
@@ -174,7 +175,7 @@ const NavBar = () => {
         onClose={onClose}
         visible={visible}
       >
-        
+
         <Space direction="vertical" >
 
           <Button

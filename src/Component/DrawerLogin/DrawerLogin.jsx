@@ -14,7 +14,7 @@ import { registerApi } from "../../Service/RegisterApi";
 import { LoginApi } from "../../Service/LoginApi";
 import { useUser } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
-
+import LoginIcon from '@mui/icons-material/Login';
 export default function LoginDrawer() {
   const navigate = useNavigate()
   const [open, setOpen] = React.useState(false);
@@ -254,7 +254,7 @@ export default function LoginDrawer() {
 
   return (
     <div>
-      <UserOutlined
+      <LoginIcon
         onClick={toggleDrawer(true)}
         style={{ fontSize: "20px", cursor: "pointer" }}
       />

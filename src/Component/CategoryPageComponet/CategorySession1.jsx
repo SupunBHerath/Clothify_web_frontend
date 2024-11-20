@@ -15,11 +15,7 @@ import ItemCard from "../Card/ItemCard";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { getProduct } from "../../Service/ProductApi";
 import { message } from "antd";
-// {
-//   id: 1,
-//   name: "Product 1",
-//   category: "Women",
-//   subCategory: "Casual",
+
 //   sizes: [
 //     { name: "S", price: 1500 },
 //     { name: "M", price: 2000 },
