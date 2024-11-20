@@ -43,18 +43,19 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<UserLayout />}>
         <Route index element={<Home />} />
-
+        <Route path='category' element={<CategoryPage />} />
+      </Route>
+      <Route path="/admin/*" element={<ProtectedRoute roles={['admin']}><AdminLayout /></ProtectedRoute>}>
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path='add' element={<AddProductForm />} />
+      </Route>
+      <Route path="/user/*" element={<ProtectedRoute roles={['customer']}><UserLayout /></ProtectedRoute>}>
+        <Route index element={<Home />} />
+        <Route path="dashboard" element={<UserDashboard />} />
         <Route path='category' element={<CategoryPage />} />
         <Route path='profile' element={<Dashboard />} />
         <Route path='add' element={<AddProductForm />} />
         <Route path='checkout' element={<Checkout />} />
-      </Route>
-      <Route path="/admin/*" element={<ProtectedRoute roles={['admin']}><AdminLayout /></ProtectedRoute>}>
-        <Route path="dashboard" element={<AdminDashboard />} />
-      </Route>
-      <Route path="/user/*" element={<ProtectedRoute roles={['customer']}><UserLayout /></ProtectedRoute>}>
-        <Route path="dashboard" element={<UserDashboard />} />
-        <Route path="d" element={<AdminDashboard />} /> 
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

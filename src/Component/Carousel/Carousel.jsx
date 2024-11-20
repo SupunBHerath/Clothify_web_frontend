@@ -25,7 +25,7 @@ const SideShow = () => {
   }, []);
 
   return (
-    <div className="container-fluid p-0">
+    <div className="container-fluid p-0" >
       <Carousel autoplay>
         {images.map((image, index) => (
           <div key={index} style={{ display: "flex", justifyContent: "center", alignItems: "center", height }}>

@@ -16,8 +16,11 @@ import {
 } from "@mui/material";
 import { createOrders } from "../../Service/OrderApi";
 import { message } from "antd";
+import { useUser } from "../../context/UserContext";
 
 const CheckoutPage = () => {
+  const { logout, cusId, isLogin } = useUser();
+
     const [activeStep, setActiveStep] = useState(0);
     const [fData, setfData] = useState({
         fullName: "",
@@ -68,27 +71,36 @@ const CheckoutPage = () => {
     const handleChange = (e) => {
         setfData({ ...fData, [e.target.name]: e.target.value });
     };
-    const handleSave = async() => {
-
-        const jsonArray = items.map((item) => ({
-            cusId: 101,
+    const handleSave = async () => {
+        const orderDetails = items.map((item) => ({
             productId: item.id,
-            cusAddress: fData.address + "," + fData.city,
-            postalCode: fData.postalCode,
-            phoneNumber: fData.phone,
             productName: item.name,
+            productImg: item.images[0].url,
             productSize: item.selectedSize.name,
-            price: item.selectedSize.price * item.qty,
+            price: item.selectedSize.price,
             qty: item.qty,
-            date: new Date().toISOString().split('T')[0],
-            status: "Pending"
         }));
-        const formData = JSON.stringify(jsonArray, null, 2)
-        console.log( jsonArray);
-        const res = await createOrders(jsonArray);
-        const result = res.data;
-        message.success(result,3)
-    }
+    
+        const order = {
+            cusId: cusId, 
+            date: new Date().toISOString().split('T')[0],
+            billingAddress: `${fData.address}, ${fData.city}, ${fData.postalCode}`,
+            phoneNumber: fData.phone,
+            status: "Pending",
+            orderDetails,
+        };
+    
+    
+        try {
+            const res = await createOrders(order);
+            const result = res.data;
+            message.success(result, 3);
+        } catch (error) {
+            console.error("Error placing order:", error);
+            message.error("Failed to place order. Please try again.", 3);
+        }
+    };
+    
     return (
         <Container maxWidth="md" sx={{ marginTop: 4, marginBottom: 4 }}>
             <Typography variant="h4" align="center" gutterBottom>

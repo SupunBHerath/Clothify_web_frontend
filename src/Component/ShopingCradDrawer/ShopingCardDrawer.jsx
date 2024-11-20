@@ -16,6 +16,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
+import LoginDrawer from "../DrawerLogin/DrawerLogin";
 
 const DrawerContent = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -50,6 +52,8 @@ const ItemContainer = styled(Box)(({ theme }) => ({
 }));
 
 export default function ShoppingCardDrawer() {
+  const { logout, cusId, isLogin } = useUser();
+
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
   const items = useSelector((state) => state.cart);
@@ -73,8 +77,8 @@ export default function ShoppingCardDrawer() {
     });
   };
   const handleButtonClick = () => {
-   setOpen(false)
-    navigate("/checkout");
+    setOpen(false)
+    navigate("checkout");
   };
 
   const totalQty = items.reduce((acc, item) => acc + item.qty, 0);
@@ -147,30 +151,53 @@ export default function ShoppingCardDrawer() {
           Your cart is empty
         </Typography>
       )}
-
       {items.length > 0 && (
-        <Footer>
-          <Typography variant="subtitle1" sx={{ mb: 1 }}>
-            Total: Rs {totalPrice}
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleButtonClick}
-            sx={{ padding: "10px 0" }}
-          >
-            Proceed to Checkout
-          </Button>
-        </Footer>
+        isLogin ? (
+          <Footer>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              Total: Rs {totalPrice}
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleButtonClick}
+              sx={{ padding: "10px 0" }}
+            >
+              Proceed to Checkout
+            </Button>
+          </Footer>
+        ) : (
+          <>
+            <Footer>
+              <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                Total: Rs {totalPrice}
+              </Typography>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                Log in to your Account
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ padding: "10px 0" }}
+              >
+                <LoginDrawer />
+              </Button>
+            </Footer>
+
+
+          </>
+        )
       )}
+
     </DrawerContent>
   );
 
   return (
     <div>
       <Badge badgeContent={cartLength} color="primary" onClick={toggleDrawer(true)}>
-        <ShoppingCartOutlined style={{ fontSize: "24px", cursor: "pointer" }} />
+        <ShoppingCartOutlined className="text-white fw-bolder" style={{ fontSize: "24px", cursor: "pointer" }} />
       </Badge>
       <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
         {ItemList}

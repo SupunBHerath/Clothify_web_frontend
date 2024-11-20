@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { UserOutlined } from "@ant-design/icons";
 import logo from "../../assets/Logo/logo.png";
 import { message } from "antd";
 import { registerApi } from "../../Service/RegisterApi";
@@ -69,13 +68,13 @@ export default function LoginDrawer() {
         if (response?.status === "success") {
           message.success(response?.message);
           login(response?.data?.role);
-          if (response?.data?.role =="admin"){
+          if (response?.data?.role == "admin") {
             await localStorage.setItem("token", response?.data?.jwtToken)
             navigate("/admin/dashboard");
-          
-          }else if(response?.data?.role=="customer"){
+
+          } else if (response?.data?.role == "customer") {
             await localStorage.setItem("token", response?.data?.jwtToken)
-            navigate("/user/dashboard");
+            navigate("/user/");
           }
 
           setFormData({ password: "", email: "" });
@@ -255,6 +254,7 @@ export default function LoginDrawer() {
   return (
     <div>
       <LoginIcon
+        className="text-white fw-bolder"
         onClick={toggleDrawer(true)}
         style={{ fontSize: "20px", cursor: "pointer" }}
       />

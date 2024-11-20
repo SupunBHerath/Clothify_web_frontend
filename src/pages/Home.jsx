@@ -9,7 +9,7 @@ import Login from '../Component/Login/Login'
 
 export default function Home() {
   return (
-    <div>
+    <div >
         <SideShow/>
         <LS1/>
         <LS2/>

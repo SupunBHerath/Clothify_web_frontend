@@ -126,7 +126,7 @@ function Row(props) {
 //     ),
 // ];
 
-export default function MyOrders() {
+export default function MyOrders({cusID}) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [rows, setRows] = React.useState([]);
@@ -134,7 +134,7 @@ export default function MyOrders() {
     React.useEffect(() => {
         const getProductData = async () => {
             try {
-                const res = await getOrdersById(100);
+                const res = await getOrdersById(cusID);
                 const data = res.data;
 
                 if (data.length > 0) {

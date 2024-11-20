@@ -6,17 +6,21 @@ import MyWishlist from "./MyWishlist";
 import { Drawer, IconButton, List, ListItem, ListItemText, Typography, Box } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import { useUser } from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
+import { message } from "antd";
 
 const Dashboard = () => {
     const [activeComponent, setActiveComponent] = useState("MyProfile");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
+    const { logout ,cusId } = useUser();
+    const navigate = useNavigate()
     const renderComponent = () => {
         switch (activeComponent) {
             case "MyProfile":
-                return <MyProfile />;
+                return <MyProfile cusID={cusId} />;
             case "MyOrders":
-                return <MyOrders />;
+                return <MyOrders cusID={cusId} />;
             case "MyAddresses":
                 return <MyAddresses />;
             case "MyWishlist":
@@ -26,7 +30,6 @@ const Dashboard = () => {
         }
     };
 
-    // Sidebar menu items
     const menuItems = [
         { label: "My Profile", value: "MyProfile" },
         { label: "My Orders", value: "MyOrders" },
@@ -37,15 +40,17 @@ const Dashboard = () => {
 
     const handleMenuClick = (value) => {
         if (value === "Logout") {
-            alert("Logging out");
+            message.success("Logout Sucessfully..")
+            logout()
+           navigate("/")
         } else {
             setActiveComponent(value);
         }
-        setIsDrawerOpen(false); 
+        setIsDrawerOpen(false);
     };
 
     return (
-        <Box sx={{ display: "flex", height: "91.2vh", backgroundColor: "#f9f9f9" ,marginTop:0}}>
+        <Box sx={{ display: "flex", height: "100vh", backgroundColor: "#f9f9f9", marginTop: 8.2 }}>
             <Box
                 sx={{
                     display: { xs: "none", md: "block" },
@@ -54,6 +59,7 @@ const Dashboard = () => {
                     color: "white",
                     padding: "20px",
                     boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
+
                 }}
             >
                 <Typography variant="h6" sx={{ textAlign: "center", marginBottom: "20px" }}>
@@ -69,7 +75,8 @@ const Dashboard = () => {
                                 backgroundColor: activeComponent === item.value ? "#F68714" : "transparent",
                                 borderRadius: "5px",
                                 marginY: "10px",
-                                
+                                cursor:"pointer"
+
                             }}
                         >
                             <ListItemText primary={item.label} />
@@ -87,7 +94,7 @@ const Dashboard = () => {
                 <Box
                     sx={{
                         width: "250px",
-                        background: "linear-gradient(180deg, #4caf50, #388e3c)",
+                        background: "linear-gradient(180deg, #646464, #646464)",
                         color: "white",
                         height: "100%",
                         padding: "20px",

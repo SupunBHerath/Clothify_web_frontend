@@ -10,40 +10,15 @@ import {
   Button,
   Drawer,
   IconButton,
+  Pagination,
 } from "@mui/material";
 import ItemCard from "../Card/ItemCard";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { getProduct } from "../../Service/ProductApi";
 import { message } from "antd";
 
-//   sizes: [
-//     { name: "S", price: 1500 },
-//     { name: "M", price: 2000 },
-//   ],
-// },
-// {
-//   id: 2,
-//   name: "Classic Sneakers",
-//   description: "Timeless style",
-//   subCategory: "Sneakers",
-//   images: [
-//     "https://via.placeholder.com/400",
-//     "https://via.placeholder.com/100",
-//     "https://via.placeholder.com/300",
-//   ],
-//   sizes: [
-//     { name: "S", price: 1500.0 },
-//     { name: "M", price: 1800.0 },
-//     { name: "L", price: 2100.0 },
-//   ],
-//   category: "Men",
-// },
-// const productData = [
-
-// ];
-
+// sizeOptions to be used for size filtering
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
-
 
 export default function CategorySession1() {
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -52,36 +27,61 @@ export default function CategorySession1() {
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [productData, setProductData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(6);
+
   useEffect(() => {
     const getProdutData = async () => {
       const response = await getProduct();
       const result = response.data;
-      if(result.length>0){
-          setProductData(result)
-          
-      }else{
-        message.warning("Producrs not found ...")
+      if (result.length > 0) {
+        setProductData(result);
+      } else {
+        message.warning("Products not found ...");
       }
-      
-     
-    }
-    getProdutData()
-  }, [])
-  const categoryOptions = [...new Set(productData.map((item) => item.category))];
-  const tagOptions = [...new Set(productData.flatMap((item) => item.subCategory))];
+    };
+    getProdutData();
+  }, []);
+
+  const categoryOptions = [
+    ...new Set(productData.map((item) => item?.category).filter(Boolean)),
+  ];
+
+  const subCategoryOptions =
+    selectedCategory
+      ? [
+        ...new Set(
+          productData
+            .filter((item) => item?.category === selectedCategory)
+            .map((item) => item?.subCategory)
+            .filter(Boolean)
+        ),
+      ]
+      : [
+        ...new Set(
+          productData
+            .map((item) => item?.subCategory)
+            .filter(Boolean)
+        ),
+      ];
 
   const handlePriceChange = (event, newValue) => setPriceRange(newValue);
 
   const filteredItems = productData.filter(
     (item) =>
       (!selectedCategory || item.category === selectedCategory) &&
-      (selectedsubCategory.length === 0 ||
-        selectedsubCategory.every((tag) => item.subCategory.includes(tag))) &&
+      (selectedsubCategory.length === 0 || selectedsubCategory.includes(item.subCategory)) &&
       (!selectedSize || item.sizes.some((size) => size.name === selectedSize)) &&
       item.sizes.some(
         (size) => size.price >= priceRange[0] && size.price <= priceRange[1]
       )
   );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
   const renderFilters = () => (
     <Box
@@ -102,6 +102,7 @@ export default function CategorySession1() {
         options={categoryOptions}
         value={selectedCategory}
         onChange={(event, newValue) => setSelectedCategory(newValue)}
+        getOptionLabel={(option) => option || ""}
         renderInput={(params) => (
           <TextField {...params} label="Category" variant="outlined" />
         )}
@@ -110,9 +111,10 @@ export default function CategorySession1() {
       <Autocomplete
         sx={{ width: "100%", marginBottom: 2 }}
         multiple
-        options={tagOptions}
+        options={subCategoryOptions || []}
         value={selectedsubCategory}
         onChange={(event, newValue) => setSelectedsubCategory(newValue)}
+        getOptionLabel={(option) => option || ""}
         renderInput={(params) => (
           <TextField {...params} label="SubCategory" variant="outlined" />
         )}
@@ -178,9 +180,10 @@ export default function CategorySession1() {
   );
 
   return (
-    <div className="mt-0 p-0">
+    <div className="p-0" style={{ marginTop: "85px" }}>
       <div className="mt-4">
         <Box sx={{ display: { xs: "block", sm: "flex" }, gap: 1, mb: 4 }}>
+          {/* Show Filter Icon only when the drawer is closed */}
           <IconButton
             sx={{
               display: { xs: "block", sm: "none" },
@@ -190,13 +193,11 @@ export default function CategorySession1() {
             <FilterAltIcon />
           </IconButton>
 
+          {/* Show Filters on larger screens */}
           <Box sx={{ display: { xs: "none", sm: "block" } }}>{renderFilters()}</Box>
 
-          <Drawer
-            anchor="left"
-            open={drawerOpen}
-            onClose={() => setDrawerOpen(false)}
-          >
+          {/* Drawer with Filters */}
+          <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
             {renderFilters()}
           </Drawer>
 
@@ -209,7 +210,7 @@ export default function CategorySession1() {
             <hr />
             <Box sx={{ flexGrow: 2 }}>
               <div className="row">
-                {filteredItems.map((item) => {
+                {currentItems.map((item) => {
                   const prices = item.sizes.map((size) => size.price);
                   const minPrice = Math.min(...prices);
                   const maxPrice = Math.max(...prices);
@@ -230,6 +231,14 @@ export default function CategorySession1() {
                   );
                 })}
               </div>
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={(event, page) => setCurrentPage(page)}
+                  color="primary"
+                />
+              </Box>
             </Box>
           </div>
         </Box>
