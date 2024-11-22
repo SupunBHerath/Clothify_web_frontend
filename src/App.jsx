@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import AdminLayout from './layouts/AdminLayout';
 import UserLayout from './layouts/UserLayout';
 import UserDashboard from './pages/User/UserDashboard';
@@ -15,7 +15,7 @@ import AdminDashboardPage from './pages/Admin/AdminDashboardPage';
 const AppRoutes = () => {
   const { role, loading } = useUser();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (!loading) {
       const pathname = window.location.pathname;
@@ -25,7 +25,7 @@ const AppRoutes = () => {
           navigate('/admin/dashboard', { replace: true });
         }
       } else if (role === 'customer') {
-        if (pathname !== '/user/dashboard' 
+        if (pathname !== '/user/dashboard'
           && pathname !== '/user/category'
           && pathname !== '/user/profile'
           && pathname !== '/user/checkout'
@@ -33,7 +33,10 @@ const AppRoutes = () => {
           navigate('/user', { replace: true });
         }
       } else {
-        navigate('/', { replace: true });
+        if (pathname !== '/category') {
+          navigate('/', { replace: true });
+        }
+
       }
     }
   }, [role, loading, navigate]);
@@ -45,7 +48,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<UserLayout />}>
-        <Route index element={<AdminDashboardPage />} />
+        <Route index element={<Home />} />
         <Route path='category' element={<CategoryPage />} />
       </Route>
       <Route path="/admin/*" element={<ProtectedRoute roles={['admin']}><AdminLayout /></ProtectedRoute>}>
@@ -60,15 +63,26 @@ const AppRoutes = () => {
         <Route path='checkout' element={<Checkout />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
+
     </Routes>
   );
 };
 
 function App() {
+  function ScrollToTopOnPageChange() {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [pathname]);
+
+    return null;
+  }
   return (
-    
+
     <UserProvider>
       <Router>
+        <ScrollToTopOnPageChange />
         <AppRoutes />
       </Router>
     </UserProvider>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card } from "antd";
+import { Card, Tag } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import ProductDialog from "../ProductDialog/ProductDialog";
 
@@ -13,7 +13,7 @@ const ItemCard = ({ product }) => {
 
   const styles = {
     card: {
-      width: 350,
+      width: 330,
       borderRadius: "12px",
       boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
       overflow: "hidden",
@@ -28,7 +28,7 @@ const ItemCard = ({ product }) => {
       position: "relative",
       overflow: "hidden",
       width: "100%",
-      height: "300px",
+      height: "330px",
       borderRadius: "8px 8px 0 0",
     },
     image: {
@@ -47,6 +47,15 @@ const ItemCard = ({ product }) => {
       transition: "background-color 0.3s ease, transform 0.3s ease",
       cursor: "pointer",
     },
+    tag: {
+      position: "absolute",
+      top: "18px",
+      left: "-25px",
+      cursor: "pointer",
+      transform: "rotate(-45deg)",
+      transformOrigin: "center",
+    },
+
     cartIconHovered: {
       backgroundColor: "#F68714",
       transform: "scale(1.1)",
@@ -68,7 +77,7 @@ const ItemCard = ({ product }) => {
       transform: "scale(1.05)",
     },
     infoContainer: {
-      padding: "8px 0",
+      padding: "5px 0",
       color: "#666",
     },
     sizeItem: {
@@ -105,6 +114,7 @@ const ItemCard = ({ product }) => {
         onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
         cover={
           <div style={styles.imageContainer}>
+
             <img
               alt="Product"
               src={product?.images[0]?.url}
@@ -120,26 +130,34 @@ const ItemCard = ({ product }) => {
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.6)")}
               onClick={handleDialogOpen}
             >
+
               <ShoppingCartOutlined style={{ color: "white", fontSize: "20px" }} />
             </div>
+            {product?.new && (<div
+              style={{
+                ...styles.tag,
+              }}
+            >
+              <Tag color="success" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;New Arrival&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Tag>
+            </div>)}
           </div>
         }
       >
-        <Meta
-          title={<h3 style={{ fontWeight: "bold", color: "#333" }}>{product?.name}</h3>}
-       
-        />
 
+        <Meta
+          title={<h5 style={{ fontWeight: "bold", color: "#333" }}>{product?.name}</h5>}
+
+        />
         <div style={styles.infoContainer}>
           <div style={styles.text} className="">
-          <span> Category: </span>
-          <strong>{product?.category}</strong>
+            <span> Category: </span>
+            <strong>{product?.category}</strong>
           </div>
         </div>
         <div style={styles.infoContainer}>
           <div style={styles.text}>
-          <span>  Available Sizes:</span>
-          <strong>{product?.sizes?.map((size) => size.name).join(", ")}</strong>
+            <span>  Available Sizes:</span>
+            <strong>{product?.sizes?.map((size) => size.name).join(", ")}</strong>
           </div>
         </div>
         <div style={styles.infoContainer}>

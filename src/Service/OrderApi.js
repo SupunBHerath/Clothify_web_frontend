@@ -8,3 +8,11 @@ export const createOrders = async (orderList) =>{
     const result = await axios.post(`/order`,orderList);
     return result;
 }
+export const getAllOrders = async () =>{
+    const result = await axios.get(`/order`);
+    return result;
+}
+export const updateStatusById = async (id,satuts) =>{
+    const result = await axios.post(`/order/update/${id}/${satuts}`);
+    return result;
+}

@@ -7,7 +7,6 @@ import axios from 'axios';
 import { Provider } from 'react-redux';
 import ShopingCartStore from './Store/ShopingCartStore.jsx';
 axios.defaults.baseURL="http://localhost:8080"
-
 createRoot(document.getElementById('root')).render(
   <Provider store={ShopingCartStore}>
     <App />

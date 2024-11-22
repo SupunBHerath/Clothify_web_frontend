@@ -37,7 +37,7 @@ const ProductDialog = ({ open, onClose, product }) => {
     setQuantity(1); // Reset quantity when size changes
   };
 
-  const getMaxQuantity = () => selectedSize?.price || 0;
+  const getMaxQuantity = () => selectedSize?.qty || 0;
 
   const handleQuantityChange = (event) => {
     const value = Math.max(1, Math.min(Number(event.target.value), getMaxQuantity()));
@@ -82,7 +82,7 @@ const ProductDialog = ({ open, onClose, product }) => {
               alt="Main"
               style={{
                 width: "100%",
-                maxHeight: "350px",
+                maxHeight: "100%",
                 objectFit: "cover",
                 marginBottom: "1rem",
               }}
@@ -138,7 +138,7 @@ const ProductDialog = ({ open, onClose, product }) => {
 
             {selectedSize && (
               <>
-                <Typography variant="subtitle1">Quantity</Typography>
+                <Typography variant="subtitle1">Quantity ( Available Qty : <span style={{color:"firebrick"}}>{getMaxQuantity()}</span> )</Typography>
                 <TextField
                   type="number"
                   value={quantity}

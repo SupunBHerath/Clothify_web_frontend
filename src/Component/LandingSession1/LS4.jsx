@@ -11,7 +11,7 @@ export default function LS4() {
     <div className="container ">
       <div className="row">
         <div className="col-md-6 col-sm-12 mt-5">
-          <CategoryCard img={c1} path={"category/women"}/>
+          <CategoryCard img={c1} path={"category"}  selectValue={"women"}/>
         </div>
         <div className="col-md-6 col-sm-12 mt-5">
           <CategoryCard img={c2} path={"category/men"} />

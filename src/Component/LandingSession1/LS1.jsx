@@ -6,21 +6,23 @@ import { getProductByBestSellers } from '../../Service/ProductApi';
 
 export default function LS1() {
   const [bestSellerData, setBestSellerData] = new useState([]);
+  const [isEmpty, setIsEmpty] = useState(false)
   useEffect(() => {
     const getProdutData = async () => {
       const response = await getProductByBestSellers();
       const result = response.data;
       if (result.length > 0) {
         setBestSellerData(result)
-
+        setIsEmpty(true)
       } else {
         message.warning("Producrs not found ...")
       }
-
-
     }
     getProdutData()
   }, [])
+  if(!isEmpty){
+    return null
+  }
 
   return (
     <div className="mt-5 mx-3">
@@ -36,7 +38,7 @@ export default function LS1() {
             return (
               <div
                 key={item.id}
-                className="col-12 col-sm-6 col-md-4 d-flex justify-content-center mb-4"
+                className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4"
               >
                 <ItemCard
                   product={{

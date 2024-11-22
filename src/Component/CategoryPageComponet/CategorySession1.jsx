@@ -183,7 +183,6 @@ export default function CategorySession1() {
     <div className="p-0" style={{ marginTop: "85px" }}>
       <div className="mt-4">
         <Box sx={{ display: { xs: "block", sm: "flex" }, gap: 1, mb: 4 }}>
-          {/* Show Filter Icon only when the drawer is closed */}
           <IconButton
             sx={{
               display: { xs: "block", sm: "none" },
@@ -193,10 +192,8 @@ export default function CategorySession1() {
             <FilterAltIcon />
           </IconButton>
 
-          {/* Show Filters on larger screens */}
           <Box sx={{ display: { xs: "none", sm: "block" } }}>{renderFilters()}</Box>
 
-          {/* Drawer with Filters */}
           <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
             {renderFilters()}
           </Drawer>
