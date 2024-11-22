@@ -22,6 +22,8 @@ const MyProfile = ({ cusID, email }) => {
   const [editableName, setEditableName] = useState(null);
   const [userData, setUserData] = useState([])
   const [editableBillingAddress, setEditableBillingAddress] = useState(null);
+  const [editableCity, setEditableCity] = useState(null);
+  const [editablePostalCode, setEditablePostalCode] = useState(null);
   const [editablePhoneNumber, setEditablePhoneNumber] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
@@ -29,7 +31,7 @@ const MyProfile = ({ cusID, email }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
-
+ const[address,setAddress]= useState(null)
 
   const fechUserData = async () => {
     const user = await getUserById(cusID);
@@ -38,7 +40,11 @@ const MyProfile = ({ cusID, email }) => {
       setEditableBillingAddress(user.billingAddress)
       setEditableName(user.name)
       setEditablePhoneNumber(user.phoneNumber)
+      setEditableCity(user.city)
+      setEditablePostalCode(user.postalCode)
       setDataLoading(false)
+      const baindAddress = user.billingAddress+"\nCity : "+user.city+"\nPostal Code : "+user.postalCode
+      setAddress(baindAddress)
     }
   }
   useEffect(() => {
@@ -51,6 +57,8 @@ const MyProfile = ({ cusID, email }) => {
         name: editableName,
         billingAddress: editableBillingAddress,
         phoneNumber: editablePhoneNumber,
+        city:editableCity,
+        postalCode:editablePostalCode
       };
 
 
@@ -64,7 +72,7 @@ const MyProfile = ({ cusID, email }) => {
         message.error("Update failed...");
       }
     } catch (e) {
-      message.error("Update failed...");
+      message.error("Error Update failed...");
       console.error("Error during update:", e);
     }
   };
@@ -200,8 +208,8 @@ const MyProfile = ({ cusID, email }) => {
               variant="outlined"
               fullWidth
               multiline
-              rows={4}
-              value={userData?.billingAddress}
+              rows={5}
+              value={address}
               disabled
               sx={{
                 backgroundColor: "#f5f5f2",
@@ -210,7 +218,7 @@ const MyProfile = ({ cusID, email }) => {
                   borderRadius: "8px",
                   "&.Mui-disabled": {
                     color: "#F68714",
-                    fontWeight: 900,
+                    fontWeight: 800,
                   },
                 },
 
@@ -279,9 +287,25 @@ const MyProfile = ({ cusID, email }) => {
             variant="outlined"
             fullWidth
             multiline
-            rows={4}
+            rows={3}
             value={editableBillingAddress}
             onChange={(e) => setEditableBillingAddress(e.target.value)}
+            sx={{ marginBottom: "1rem" }}
+          />
+          <TextField
+            label="City"
+            variant="outlined"
+            fullWidth
+            value={editableCity}
+            onChange={(e) => setEditableCity(e.target.value)}
+            sx={{ marginBottom: "1rem" }}
+          />
+          <TextField
+            label="Postl Code"
+            variant="outlined"
+            fullWidth
+            value={editablePostalCode}
+            onChange={(e) => setEditablePostalCode(e.target.value)}
             sx={{ marginBottom: "1rem" }}
           />
           <TextField

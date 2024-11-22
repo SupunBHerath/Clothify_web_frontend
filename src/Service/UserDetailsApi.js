@@ -5,6 +5,6 @@ export const getUserById = async ( id) =>{
     return result.data;
 }
 export const updateUserById = async ( id , user) =>{
-    const result = await axios.put(`/user/update/${id}`,user);
+    const result = await axios.put(`/user/${id}`,user);
     return result.data;
 }

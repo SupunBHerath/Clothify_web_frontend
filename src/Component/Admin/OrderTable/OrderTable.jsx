@@ -18,8 +18,8 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { Button, message, Modal, Popconfirm, Select } from 'antd';
 import { getAllOrders, updateStatusById } from '../../../Service/OrderApi';
 
-function createData(id, cusId, date, status, billingAddress, phoneNumber, orderDetails) {
-    return { id, cusId, date, status, billingAddress, phoneNumber, orderDetails };
+function createData(id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod) {
+    return { id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod };
 }
 
 function Row(props) {
@@ -75,13 +75,13 @@ function Row(props) {
                     </TableCell>
                     <TableCell>{row?.date}</TableCell>
                     <TableCell>CS{row?.id}</TableCell>
+                    <TableCell>{row?.invoiceNumber}</TableCell>
+                    <TableCell>{row?.paymentMethod}</TableCell>
+                    <TableCell >{row?.billingAddress}</TableCell>
+                    <TableCell >{row?.phoneNumber}</TableCell>
                     <TableCell>{row.orderDetails?.length}</TableCell>
-                    <TableCell>
-                        {row?.orderDetails?.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)}
-                    </TableCell>
-                    <TableCell>{row?.billingAddress}</TableCell>
-                    <TableCell>{row?.phoneNumber}</TableCell>
-                    <TableCell>{row?.status}</TableCell>
+                    <TableCell >{row?.orderDetails?.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)}</TableCell>
+                    <TableCell >{row?.status}</TableCell>
                     <TableCell align="center">
                         <IconButton onClick={() => showModal(row)} color="warning" aria-label="edit">
                             <EditIcon />
@@ -217,7 +217,7 @@ export default function OrderTable() {
             const data = res.data;
             if (data.length > 0) {
                 const formattedRows = data.map((item) =>
-                    createData(item.id, item.cusId, item.date, item.status, item.billingAddress, item.phoneNumber, item.orderDetails)
+                    createData(item.id, item.cusId, item.date, item.status, item.billingAddress, item.phoneNumber, item.orderDetails, item.invoiceNumber, item.paymentMethod)
                 );
                 setRows(formattedRows);
             }
@@ -247,13 +247,15 @@ export default function OrderTable() {
                         <TableHead>
                             <TableRow>
                                 <TableCell />
-                                <TableCell>Date</TableCell>
-                                <TableCell>Order ID</TableCell>
-                                <TableCell>Item Quantity</TableCell>
-                                <TableCell>Total Price (Rs)</TableCell>
-                                <TableCell>Billing Address</TableCell>
-                                <TableCell>Phone Number</TableCell>
-                                <TableCell>Status</TableCell>
+                                <TableCell className='fw-bold' >Date</TableCell>
+                                <TableCell className='fw-bold' >Order ID</TableCell>
+                                <TableCell className='fw-bold' >INV Number</TableCell>
+                                <TableCell className='fw-bold' >Payment Method</TableCell>
+                                <TableCell className='fw-bold' >Billing Address</TableCell>
+                                <TableCell className='fw-bold'  >Phone Number</TableCell>
+                                <TableCell className='fw-bold' >Items</TableCell>
+                                <TableCell className='fw-bold' >Total Price</TableCell>
+                                <TableCell className='fw-bold' >Status</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>

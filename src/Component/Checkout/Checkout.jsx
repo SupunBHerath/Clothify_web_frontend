@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
     Container,
@@ -6,22 +6,28 @@ import {
     Stepper,
     Step,
     StepLabel,
-    Button,
     Card,
     CardContent,
     Divider,
     Box,
     Grid,
     TextField,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
 } from "@mui/material";
 import { createOrders } from "../../Service/OrderApi";
-import { message } from "antd";
+import { Button, message, notification } from "antd";
 import { useUser } from "../../context/UserContext";
+import { getUserById } from "../../Service/UserDetailsApi";
+import { useNavigate } from "react-router-dom";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 const CheckoutPage = () => {
-  const { logout, cusId, isLogin } = useUser();
+    const { logout, cusId, isLogin } = useUser();
 
     const [activeStep, setActiveStep] = useState(0);
+    const [invoiceNumber, setIinvoiceNumber] = useState(0);
     const [fData, setfData] = useState({
         fullName: "",
         address: "",
@@ -31,11 +37,42 @@ const CheckoutPage = () => {
         cardNumber: "",
         expiryDate: "",
         cvv: "",
+        paymentMethod: ""
     });
     const [errors, setErrors] = useState({});
-
+    const navigate = useNavigate();
     const items = useSelector((state) => state.cart);
-    console.log(items);
+    const [api, contextHolder] = notification.useNotification();
+    const [isloading, setIsLoading] = useState(false)
+    const openNotificationWithIcon = (type, title, description) => {
+        api[type]({
+            message: title,
+            description: description,
+            duration: 5,
+        });
+    };
+
+    const fechUserData = async () => {
+        const user = await getUserById(cusId);
+        if (user?.id == cusId) {
+            setfData({
+                fullName: user.name,
+                address: user.billingAddress,
+                city: user.city,
+                postalCode: user.postalCode,
+                phone: user.phoneNumber,
+                cardNumber: "",
+                expiryDate: "",
+                cvv: "",
+                paymentMethod: ""
+
+            })
+        }
+    }
+
+    useEffect(() => {
+        fechUserData()
+    }, [cusId])
 
     const steps = ["Shipping Details", "Payment Information", "Review & Place Order"];
 
@@ -59,12 +96,68 @@ const CheckoutPage = () => {
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
     };
+    const validate = () => {
+        let tempErrors = {};
+        let isValid = true;
+
+        // Card Number Validation
+        const cardNumberRegex = /^\d{13,19}$/;
+        if (!fData.cardNumber) {
+            tempErrors.cardNumber = "Card Number is required";
+            isValid = false;
+        } else if (!cardNumberRegex.test(fData.cardNumber)) {
+            tempErrors.cardNumber = "Card Number must be between 13 and 19 digits";
+            isValid = false;
+        }
+
+        const expiryDateRegex = /^(0[1-9]|1[0-2])\/(\d{2})$/;
+        if (!fData.expiryDate) {
+            tempErrors.expiryDate = "Expiry Date is required";
+            isValid = false;
+        } else if (!expiryDateRegex.test(fData.expiryDate)) {
+            tempErrors.expiryDate = "Invalid Expiry Date format (MM/YY) {03/25}";
+            isValid = false;
+        } else {
+            const [month, year] = fData.expiryDate.split('/');
+            const expiryDate = new Date(`20${year}-${month}-01`);
+            const currentDate = new Date();
+            if (expiryDate < currentDate) {
+                tempErrors.expiryDate = "Card has expired";
+                isValid = false;
+            }
+        }
+
+        // CVV Validation
+        const cvvRegex = /^\d{3,4}$/;
+        if (!fData.cvv) {
+            tempErrors.cvv = "CVV is required";
+            isValid = false;
+        } else if (!cvvRegex.test(fData.cvv)) {
+            tempErrors.cvv = "CVV must be 3 or 4 digits";
+            isValid = false;
+        }
+        setErrors(tempErrors);
+        return isValid;
+    };
 
     const handleNext = () => {
+
         if (validateStep()) {
+            if (activeStep === 1 & fData.paymentMethod == "Online Payment") {
+                if (validate()) {
+                    setActiveStep((prev) => prev + 1);
+                } else {
+                    setActiveStep(1);
+                }
+            } else {
+                setActiveStep((prev) => prev + 1);
+            }
+        } else if (activeStep === 1 & fData.paymentMethod != "Online Payment") {
             setActiveStep((prev) => prev + 1);
         }
     };
+
+
 
     const handleBack = () => setActiveStep((prev) => prev - 1);
 
@@ -72,6 +165,8 @@ const CheckoutPage = () => {
         setfData({ ...fData, [e.target.name]: e.target.value });
     };
     const handleSave = async () => {
+        setIsLoading(true);
+
         const orderDetails = items.map((item) => ({
             productId: item.id,
             productName: item.name,
@@ -80,27 +175,62 @@ const CheckoutPage = () => {
             price: item.selectedSize.price,
             qty: item.qty,
         }));
-    
+        const generateInvoiceNumber = async () => {
+            const prefix = 'INV';
+            const randomNum = Math.floor(Math.random() * 1000000);
+            const invoiceNumber = `${prefix}${randomNum.toString().padStart(6, '0')}`;
+            return invoiceNumber;
+        };
+        const IVN = await generateInvoiceNumber();
         const order = {
-            cusId: cusId, 
+            cusId: cusId,
             date: new Date().toISOString().split('T')[0],
             billingAddress: `${fData.address}, ${fData.city}, ${fData.postalCode}`,
             phoneNumber: fData.phone,
+            paymentMethod: fData.paymentMethod,
+            invoiceNumber: IVN,
             status: "Pending",
             orderDetails,
         };
-    
-    
+
         try {
             const res = await createOrders(order);
-            const result = res.data;
-            message.success(result, 3);
+            if (res.status === 200) {
+                const result = res.data;
+                setTimeout(() => {
+                    openNotificationWithIcon(
+                        'success',
+                        '🎉 Order Placed Successfully!',
+                        'Your order has been successfully placed. Check your profile for more details.'
+                    );
+
+                }, 2000);
+
+                setTimeout(() => {
+                    navigate("/user/profile")
+                    setIsLoading(false)
+
+                }, 6000);
+            } else {
+                setIsLoading(false)
+
+                openNotificationWithIcon(
+                    'error',
+                    '💥 Order Failed!',
+                    'Something went wrong. Please check your account balance and try again.'
+                );
+            }
         } catch (error) {
+            setIsLoading(false)
             console.error("Error placing order:", error);
-            message.error("Failed to place order. Please try again.", 3);
+            openNotificationWithIcon(
+                'error',
+                '🚨 Error Occurred!',
+                'Oops! There was an issue placing your order. Please check your details and try again.'
+            );
         }
     };
-    
+
     return (
         <Container maxWidth="md" sx={{ marginTop: 4, marginBottom: 4 }}>
             <Typography variant="h4" align="center" gutterBottom>
@@ -188,43 +318,61 @@ const CheckoutPage = () => {
                             Payment Information
                         </Typography>
                         <Divider sx={{ marginBottom: 2 }} />
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Card Number"
-                                    name="cardNumber"
-                                    value={fData.cardNumber}
-                                    onChange={handleChange}
-                                    error={!!errors.cardNumber}
-                                    helperText={errors.cardNumber}
-                                />
+
+                        <Typography variant="subtitle1" gutterBottom>
+                            Choose Payment Method
+                        </Typography>
+                        <RadioGroup
+                            row
+                            aria-label="payment-method"
+                            name="paymentMethod"
+                            value={fData.paymentMethod}
+                            onChange={handleChange}
+                        >
+                            <FormControlLabel value="Cash On Delivery" control={<Radio />} label="Cash on Delivery" />
+                            <FormControlLabel value="Online Payment" control={<Radio />} label="Card Payment" />
+                        </RadioGroup>
+
+                        {fData.paymentMethod === 'onlinePayment' && (
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        label="Card Number"
+                                        name="cardNumber"
+                                        value={fData.cardNumber}
+                                        onChange={handleChange}
+                                        error={!!errors.cardNumber}
+                                        helperText={errors.cardNumber}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Expiry Date (MM/YY)"
+                                        name="expiryDate"
+                                        value={fData.expiryDate}
+                                        onChange={handleChange}
+                                        error={!!errors.expiryDate}
+                                        helperText={errors.expiryDate}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="CVV"
+                                        name="cvv"
+                                        value={fData.cvv}
+                                        onChange={handleChange}
+                                        error={!!errors.cvv}
+                                        helperText={errors.cvv}
+                                    />
+                                </Grid>
                             </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Expiry Date"
-                                    name="expiryDate"
-                                    value={fData.expiryDate}
-                                    onChange={handleChange}
-                                    error={!!errors.expiryDate}
-                                    helperText={errors.expiryDate}
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    fullWidth
-                                    label="CVV"
-                                    name="cvv"
-                                    value={fData.cvv}
-                                    onChange={handleChange}
-                                    error={!!errors.cvv}
-                                    helperText={errors.cvv}
-                                />
-                            </Grid>
-                        </Grid>
+                        )}
                     </Box>
                 )}
+
 
                 {activeStep === 2 && (
                     <Box>
@@ -294,20 +442,26 @@ const CheckoutPage = () => {
 
                 <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
                     <Button
-                        variant="outlined"
+                        color="danger" variant="dashed"
+                        icon={<LeftOutlined />}
                         disabled={activeStep === 0}
                         onClick={handleBack}
                     >
                         Back
                     </Button>
                     {activeStep < steps.length - 1 ? (
-                        <Button variant="contained" onClick={handleNext}>
-                            Next
-                        </Button>
+                        <>
+                            <Button color="primary" variant="dashed" icon={<RightOutlined />} iconPosition="end" onClick={handleNext}>
+                                Next
+                            </Button>
+                        </>
                     ) : (
-                        <Button variant="contained" color="primary" onClick={handleSave}>
-                            Place Order
-                        </Button>
+                        <>
+                            {contextHolder}
+                            <Button type="primary" loading={isloading} disabled={!items.length > 0} color="primary" onClick={handleSave}>
+                                Place Order
+                            </Button>
+                        </>
                     )}
                 </Box>
             </Card>
