@@ -14,15 +14,20 @@ import {
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from "react-redux";
+import { Alert, Tag } from "antd";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
 
 const ProductDialog = ({ open, onClose, product }) => {
+  const { role, loading, isLogin } = useUser();
+
   const [mainImage, setMainImage] = useState(product.images[0].url);
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
+  const navigate = useNavigate()
   useEffect(() => {
     setSelectedSize(product.sizes[0]);
   }, [product.sizes]);
@@ -43,7 +48,10 @@ const ProductDialog = ({ open, onClose, product }) => {
     const value = Math.max(1, Math.min(Number(event.target.value), getMaxQuantity()));
     setQuantity(value);
   };
-
+  const handleBuyNow = () => {
+    addToCart()
+    navigate("/user/checkout")
+  }
   const addToCart = () => {
     // Include selected size and quantity in the payload
     dispatch({
@@ -108,14 +116,17 @@ const ProductDialog = ({ open, onClose, product }) => {
           </Box>
 
           <Box flex={1} padding={isSmallScreen ? 0 : 2}>
+            {product?.new && (<Tag color="success" >New Arrival</Tag>)}
+
             <Typography variant="h6">{product.name}</Typography>
             <Typography variant="body1" color="textSecondary" gutterBottom>
               {product.category}
             </Typography>
+
             <Typography variant="body1" color="textSecondary" gutterBottom>
               {product.description}
             </Typography>
-            
+
 
             <Typography variant="subtitle1" color="primary" gutterBottom>
               Price: ${selectedSize?.price?.toFixed(2)}
@@ -138,7 +149,7 @@ const ProductDialog = ({ open, onClose, product }) => {
 
             {selectedSize && (
               <>
-                <Typography variant="subtitle1">Quantity ( Available Qty : <span style={{color:"firebrick"}}>{getMaxQuantity()}</span> )</Typography>
+                <Typography variant="subtitle1">Quantity ( Available Qty : <span style={{ color: "firebrick" }}>{getMaxQuantity()}</span> )</Typography>
                 <TextField
                   type="number"
                   value={quantity}
@@ -153,7 +164,12 @@ const ProductDialog = ({ open, onClose, product }) => {
                 />
               </>
             )}
-
+           {!isLogin && ( <Alert
+              message="Please log in to buy products."
+              type="warning"
+              showIcon
+              closable
+            />)}
             <Box display="flex" flexDirection={isSmallScreen ? "column" : "row"} gap={2}>
               <button
                 type="button"
@@ -175,6 +191,8 @@ const ProductDialog = ({ open, onClose, product }) => {
               </button>
               <button
                 type="button"
+                disabled={!isLogin}
+                onClick={handleBuyNow}
                 style={{
                   width: "100%",
                   backgroundColor: "#F68714",

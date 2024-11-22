@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   TextField,
@@ -13,21 +13,59 @@ import {
   DialogActions,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import { getUserById, updateUserById } from "../../Service/UserDetailsApi";
+import { message } from "antd";
 
-const MyProfile = ({ cusID, name, email, billingAddress, phoneNumber }) => {
-  const [editableName, setEditableName] = useState(name);
-  const [editableBillingAddress, setEditableBillingAddress] = useState(billingAddress);
-  const [editablePhoneNumber, setEditablePhoneNumber] = useState(phoneNumber);
+const MyProfile = ({ cusID, email }) => {
+  const [editableName, setEditableName] = useState(null);
+  const [userData, setUserData] = useState([])
+  const [editableBillingAddress, setEditableBillingAddress] = useState(null);
+  const [editablePhoneNumber, setEditablePhoneNumber] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [dataLoading, setDataLoading] = useState(true);
+  const fechUserData = async () => {
+    const user = await getUserById(cusID);
+    if (user?.id == cusID) {
+      setUserData(user);
+      setEditableBillingAddress(user.billingAddress)
+      setEditableName(user.name)
+      setEditablePhoneNumber(user.phoneNumber)
+      setDataLoading(false)
+    }
+  }
+  useEffect(() => {
+    fechUserData()
+  }, [cusID])
 
-  const handleProfileUpdate = () => {
-    console.log("Profile updated:", { editableName, editableBillingAddress, editablePhoneNumber });
-    setIsEditDialogOpen(false);
+  const handleProfileUpdate = async () => {
+    try {
+      const data = {
+        name: editableName,
+        billingAddress: editableBillingAddress,
+        phoneNumber: editablePhoneNumber,
+      };
+
+
+      const res = await updateUserById(cusID, data);
+
+      if (res) {
+        message.success("Update Successfully...");
+        setIsEditDialogOpen(false);
+        fechUserData()
+      } else {
+        message.error("Update failed...");
+      }
+    } catch (e) {
+      message.error("Update failed...");
+      console.error("Error during update:", e);
+    }
   };
+
+
 
   const handlePasswordUpdate = () => {
     if (newPassword !== confirmPassword) {
@@ -37,6 +75,9 @@ const MyProfile = ({ cusID, name, email, billingAddress, phoneNumber }) => {
     console.log("Password updated:", { oldPassword, newPassword });
     setIsPasswordDialogOpen(false);
   };
+  if (dataLoading) {
+    return null
+  }
 
   return (
     <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -124,7 +165,7 @@ const MyProfile = ({ cusID, name, email, billingAddress, phoneNumber }) => {
               variant="outlined"
               fullWidth
               disabled
-              value={editableName}
+              value={userData.name}
               sx={{
                 backgroundColor: "#f5f5f2",
                 borderRadius: "8px",
@@ -145,7 +186,7 @@ const MyProfile = ({ cusID, name, email, billingAddress, phoneNumber }) => {
               fullWidth
               multiline
               rows={4}
-              value={editableBillingAddress}
+              value={userData?.billingAddress}
               disabled
               sx={{
                 backgroundColor: "#f5f5f2",
@@ -165,7 +206,7 @@ const MyProfile = ({ cusID, name, email, billingAddress, phoneNumber }) => {
               label="Phone Number"
               variant="outlined"
               fullWidth
-              value={editablePhoneNumber}
+              value={userData?.phoneNumber}
               disabled
               sx={{
                 backgroundColor: "#f5f5f2",
@@ -209,6 +250,7 @@ const MyProfile = ({ cusID, name, email, billingAddress, phoneNumber }) => {
       >
         <DialogTitle>Edit Profile</DialogTitle>
         <DialogContent>
+          <br />
           <TextField
             label="Name"
             variant="outlined"

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MyProfile from "./MyProfile";
 import MyOrders from "./MyOrders";
 import MyAddresses from "./MyAddresses";
@@ -14,7 +14,7 @@ const Dashboard = () => {
     const [activeComponent, setActiveComponent] = useState("MyOrders");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const { logout ,cusId,email } = useUser();
-    const navigate = useNavigate()
+ 
     const renderComponent = () => {
         switch (activeComponent) {
             case "MyProfile":

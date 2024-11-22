@@ -16,12 +16,15 @@ import ItemCard from "../Card/ItemCard";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { getProduct } from "../../Service/ProductApi";
 import { message } from "antd";
+import { useSearchParams } from "react-router-dom";
 
 // sizeOptions to be used for size filtering
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
 
 export default function CategorySession1() {
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get("c");
+  const [selectedCategory, setSelectedCategory] = useState(category);
   const [selectedsubCategory, setSelectedsubCategory] = useState([]);
   const [selectedSize, setSelectedSize] = useState("");
   const [priceRange, setPriceRange] = useState([0, 5000]);
@@ -29,7 +32,7 @@ export default function CategorySession1() {
   const [productData, setProductData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6);
-
+ 
   useEffect(() => {
     const getProdutData = async () => {
       const response = await getProduct();

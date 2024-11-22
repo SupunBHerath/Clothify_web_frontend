@@ -5,7 +5,7 @@ export const AddProduct = async (product) =>{
     return result;
 }
 export const updateProduct = async (id,product) =>{
-    const result = await axios.post(`/product/update/${id}`,product);
+    const result = await axios.put(`/product/update/${id}`,product);
     return result;
 }
 
