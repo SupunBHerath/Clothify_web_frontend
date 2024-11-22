@@ -13,6 +13,6 @@ export const getAllOrders = async () =>{
     return result;
 }
 export const updateStatusById = async (id,satuts) =>{
-    const result = await axios.post(`/order/update/${id}/${satuts}`);
+    const result = await axios.put(`/order/${id}/${satuts}`);
     return result;
 }

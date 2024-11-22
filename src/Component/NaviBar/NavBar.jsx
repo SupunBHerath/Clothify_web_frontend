@@ -46,7 +46,7 @@ const NavBar = () => {
     <div
       style={{
         position: "fixed",
-        width:"100%",
+        width: "100%",
         top: 0,
         zIndex: 1000,
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.8)",
@@ -113,7 +113,10 @@ const NavBar = () => {
               <Space style={{ marginRight: "20px" }}>
                 <Button
                   type="link"
-                  onClick={() => navigate("")}
+                  onClick={() => {
+                    navigate("");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                   style={{ color: "white", fontWeight: "700", fontSize: 18 }}
                 >
                   Home
@@ -122,7 +125,10 @@ const NavBar = () => {
               <Space style={{ marginRight: "20px" }}>
                 <Button
                   type="link"
-                  onClick={() => navigate("category")}
+                  onClick={() => {
+                    navigate("category");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                   style={{ color: "white", fontWeight: "700", fontSize: 18 }}
                 >
                   Products
@@ -131,7 +137,15 @@ const NavBar = () => {
               <Space style={{ marginRight: "20px" }}>
                 <Button
                   type="link"
-                  onClick={() => navigate("category")}
+                  onClick={async () => {
+                    navigate("/"); 
+                    setTimeout(() => {
+                      const element = document.getElementById("contactus");
+                      if (element) {
+                        element.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }, 500);  
+                  }}
                   style={{ color: "white", fontWeight: "700", fontSize: 18 }}
                 >
                   Contact Us

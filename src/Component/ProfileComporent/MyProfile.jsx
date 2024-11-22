@@ -15,6 +15,8 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import { getUserById, updateUserById } from "../../Service/UserDetailsApi";
 import { message } from "antd";
+import { updatePassword } from "../../Service/LoginApi";
+import { Password } from "@mui/icons-material";
 
 const MyProfile = ({ cusID, email }) => {
   const [editableName, setEditableName] = useState(null);
@@ -27,6 +29,8 @@ const MyProfile = ({ cusID, email }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
+
+
   const fechUserData = async () => {
     const user = await getUserById(cusID);
     if (user?.id == cusID) {
@@ -67,13 +71,24 @@ const MyProfile = ({ cusID, email }) => {
 
 
 
-  const handlePasswordUpdate = () => {
+  const handlePasswordUpdate = async () => {
+    try{
     if (newPassword !== confirmPassword) {
-      alert("New Password and Confirm Password do not match!");
+      message.error("New Password and Confirm Password do not match!");
       return;
     }
-    console.log("Password updated:", { oldPassword, newPassword });
-    setIsPasswordDialogOpen(false);
+    const res = await updatePassword(cusID, newPassword,oldPassword)
+    if (res) {
+      message.success("Password update success...")
+      setIsPasswordDialogOpen(false);
+
+    } else {
+      message.error("Password update faile...")
+    }
+  }catch(e){
+    message.error("Password update faile...")
+      
+  }
   };
   if (dataLoading) {
     return null
