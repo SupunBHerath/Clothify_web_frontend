@@ -14,15 +14,19 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TablePagination from '@mui/material/TablePagination';
-import { getOrdersById } from '../../Service/OrderApi';
+import { deleteOrderByOrderId, getOrdersById } from '../../Service/OrderApi';
+import { Button, message } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 
-function createData(id, cusId, date, status,billingAddress, phoneNumber,orderDetails,invoiceNumber,paymentMethod) {
-    return { id, cusId, date, status,billingAddress,phoneNumber, orderDetails,invoiceNumber,paymentMethod };
+function createData(id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod) {
+    return { id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod };
 }
 
 function Row(props) {
-    const { row } = props;
+    const { row, handleDeleteOrder } = props;
     const [open, setOpen] = React.useState(false);
+
+
     return (
         <React.Fragment >
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} >
@@ -37,13 +41,13 @@ function Row(props) {
                 </TableCell>
                 <TableCell>{row?.date}</TableCell>
                 <TableCell>CS{row?.id}</TableCell>
-                <TableCell>{row?.invoiceNumber}</TableCell>
                 <TableCell>{row?.paymentMethod}</TableCell>
                 <TableCell >{row?.billingAddress}</TableCell>
-                <TableCell >{row?.phoneNumber}</TableCell>
                 <TableCell>{row.orderDetails?.length}</TableCell>
                 <TableCell >{row?.orderDetails?.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)}</TableCell>
                 <TableCell >{row?.status}</TableCell>
+                <TableCell ><Button icon={<DeleteOutlined />} type='dashed' color='danger' disabled={row.status != "Pending"} onClick={() => handleDeleteOrder(row.id)} danger></Button></TableCell>
+
             </TableRow>
             <TableRow >
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6} >
@@ -52,6 +56,9 @@ function Row(props) {
                             <Typography variant="h6" gutterBottom component="div" className='fw-bold' >
                                 Order Details
                             </Typography>
+                            <h6>INV Number   : {row?.invoiceNumber} </h6>
+                            <h6> Phone Number :  {row?.phoneNumber}</h6>
+                            <hr />
                             <Table size="small" aria-label="order details" className='bg-body-tertiary'>
                                 <TableHead>
                                     <TableRow>
@@ -61,7 +68,7 @@ function Row(props) {
                                         <TableCell className='fw-bold'  >Size</TableCell>
                                         <TableCell className='fw-bold'  >Qty</TableCell>
                                         <TableCell className='fw-bold'  >Total Price (RS)</TableCell>
-                                       
+
                                     </TableRow>
                                 </TableHead>
                                 <TableBody >
@@ -128,28 +135,46 @@ function Row(props) {
 //     ),
 // ];
 
-export default function MyOrders({cusID}) {
+export default function MyOrders({ cusID }) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [rows, setRows] = React.useState([]);
 
-    React.useEffect(() => {
-        const getProductData = async () => {
-            try {
-                const res = await getOrdersById(cusID);
-                const data = res.data;
+    const handleDeleteOrder = async (id) => {
+        try {
+            const res = await deleteOrderByOrderId(id)
+            if (res.data == true) {
+                message.success("Your Order Delete Success...")
+                getProductData()
+            } else if (res.data?.status == "Failed") {
+                message.error(res.data?.message);
+            } else {
+                message.error("Your Order Delete fail....");
 
-                if (data.length > 0) {
-                    const formattedRows = data.map(item =>
-                        createData(item.id, item.cusId, item.date, item.status,item.billingAddress,item.phoneNumber, item.orderDetails,item.invoiceNumber,item.paymentMethod)
-                    );
-                    setRows(formattedRows);
-                }
-            } catch (error) {
-                console.error('Error fetching product data:', error);
             }
-        };
+        } catch (e) {
+            console.error(e);
 
+        }
+    }
+    const getProductData = async () => {
+        try {
+            const res = await getOrdersById(cusID);
+            let value = res.data;
+
+            if (value.length > 0) {
+                value = value.sort((a, b) => b.id - a.id);
+
+                const formattedRows = value.map(item =>
+                    createData(item.id, item.cusId, item.date, item.status, item.billingAddress, item.phoneNumber, item.orderDetails, item.invoiceNumber, item.paymentMethod)
+                );
+                setRows(formattedRows);
+            }
+        } catch (error) {
+            console.error('Error fetching product data:', error);
+        }
+    };
+    React.useEffect(() => {
         getProductData();
     }, []);
     const handleChangePage = (event, newPage) => {
@@ -158,7 +183,7 @@ export default function MyOrders({cusID}) {
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0); 
+        setPage(0);
     };
 
     return (
@@ -169,18 +194,17 @@ export default function MyOrders({cusID}) {
                         <TableCell />
                         <TableCell className='fw-bold' >Date</TableCell>
                         <TableCell className='fw-bold' >Order ID</TableCell>
-                        <TableCell className='fw-bold' >INV Number</TableCell>
                         <TableCell className='fw-bold' >Payment Method</TableCell>
                         <TableCell className='fw-bold' >Billing Address</TableCell>
-                        <TableCell className='fw-bold'  >Phone Number</TableCell>
                         <TableCell className='fw-bold' >Items</TableCell>
                         <TableCell className='fw-bold' >Total Price</TableCell>
                         <TableCell className='fw-bold' >Status</TableCell>
+                        <TableCell className='fw-bold' >Action</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-                        <Row key={row.id} row={row} />
+                        <Row key={row.id} row={row} handleDeleteOrder={handleDeleteOrder} />
                     ))}
                 </TableBody>
             </Table>

@@ -21,8 +21,8 @@ const AppRoutes = () => {
       const pathname = window.location.pathname;
 
       if (role === 'admin') {
-        if (pathname !== '/admin/dashboard') {
-          navigate('/admin/dashboard', { replace: true });
+        if (pathname !== '/admin') {
+          navigate('/admin', { replace: true });
         }
       } else if (role === 'customer') {
         if (pathname !== '/user/dashboard'
@@ -52,8 +52,7 @@ const AppRoutes = () => {
         <Route path='category' element={<CategoryPage />} />
       </Route>
       <Route path="/admin/*" element={<ProtectedRoute roles={['admin']}><AdminLayout /></ProtectedRoute>}>
-        <Route path="dashboard" element={<AdminDashboardPage />} />
-        <Route path='add' element={<AddProductForm />} />
+        <Route index element={<AdminDashboardPage />} />
       </Route>
       <Route path="/user/*" element={<ProtectedRoute roles={['customer']}><UserLayout /></ProtectedRoute>}>
         <Route index element={<Home />} />

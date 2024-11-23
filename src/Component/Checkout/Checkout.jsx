@@ -189,7 +189,7 @@ const CheckoutPage = () => {
             phoneNumber: fData.phone,
             paymentMethod: fData.paymentMethod,
             invoiceNumber: IVN,
-            status: "Pending",
+            status: "Processing",
             orderDetails,
         };
 

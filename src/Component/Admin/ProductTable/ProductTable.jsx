@@ -202,17 +202,27 @@ export default function ProductTable() {
   };
 
   const handleEditSubmit = async (values) => {
+  
     try {
       setIsLoading(true);
+  
+      const newFiles = [];
+      const existingUrls = [];
+  
+      imageList.forEach((fileWrapper) => {
+        if (fileWrapper.originFileObj) {
+          newFiles.push(fileWrapper.originFileObj); 
+        } else if (fileWrapper.url) {
+          existingUrls.push(fileWrapper.url); 
+        }
+      });
+  
       const uploadedImages = await Promise.all(
-        imageList.map(async (fileWrapper) => {
-          const file = fileWrapper.originFileObj;
-          if (!file) return null;
-    
+        newFiles.map(async (file) => {
           const formData = new FormData();
-          formData.append("file", file); 
-          formData.append("upload_preset", UPLOAD_PRESET); 
-    
+          formData.append("file", file);
+          formData.append("upload_preset", UPLOAD_PRESET);
+  
           try {
             const response = await axios.post(CLOUDINARY_URL, formData, {
               headers: { "Content-Type": "multipart/form-data" },
@@ -220,18 +230,22 @@ export default function ProductTable() {
             return response.data.secure_url;
           } catch (error) {
             console.error("Error uploading image:", error);
-            return null; 
+            return null;
           }
         })
       );
-    
-      const validUrls = uploadedImages.filter((url) => url !== null);
-      const formattedImages = validUrls.map((url) => ({ url }));
+  
+      const newUrls = uploadedImages.filter((url) => url !== null);
+  
+      const allUrls = [...existingUrls, ...newUrls];
+      const formattedImages = allUrls.map((url) => ({ url }));
+   
       const Product = {
         ...selectedProduct,
         ...values,
         images: formattedImages,
       };
+      
       if (isAddProduct) {
         const res = await AddProduct(Product);
         if (res.data) {

@@ -16,3 +16,10 @@ export const updateStatusById = async (id,satuts) =>{
     const result = await axios.put(`/order/${id}/${satuts}`);
     return result;
 }
+
+export const deleteOrderByOrderId =async(id) =>{
+    const jwt = localStorage.getItem("token")
+    const result = await axios.delete(`/order/${id}/${jwt}`)
+    return result;
+
+}

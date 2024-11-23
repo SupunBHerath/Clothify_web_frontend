@@ -26,7 +26,7 @@ export default function UserLayout() {
         }}
       >
         <br />
-        <Footer />
+        {/* <Footer /> */}
       </footer>
     </div>
 

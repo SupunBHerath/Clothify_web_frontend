@@ -27,6 +27,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CategoryIcon from '@mui/icons-material/Category';
 import ProductTable from '../ProductTable/ProductTable';
 import { Badge } from '@mui/material';
+import { useUser } from '../../../context/UserContext';
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -102,9 +103,11 @@ export default function AdminNavbar() {
   const [row, setRow] = React.useState(null);
   const [title, setTite] = React.useState('Welcome to Admin Dashboard');
   const navigate = useNavigate();
+  const { logout ,cusId,email } = useUser();
 
  const handleLogout = () => {
     logout();
+    navigate("/")
   };
 
   const handleDrawerOpen = () => {
@@ -133,7 +136,7 @@ export default function AdminNavbar() {
  
 
   const users = () => {
-    setActiveComponent('user');
+    setActiveComponent('users');
     setTite('User Details');
   };
 
@@ -230,7 +233,7 @@ export default function AdminNavbar() {
         {activeComponent === 'dashboard' && <AdminDashboard />}
         {activeComponent === 'product' && <ProductTable />}
         {activeComponent === 'order' && <OrderTable />}
-        {activeComponent === 'user' && <UserTable />}
+        {activeComponent === 'users' && <UserTable />}
       </Box>
 
     </Box>

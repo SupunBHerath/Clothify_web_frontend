@@ -70,7 +70,7 @@ export default function LoginDrawer() {
           login(response?.data?.role);
           if (response?.data?.role == "admin") {
             await localStorage.setItem("token", response?.data?.jwtToken)
-            navigate("/admin/dashboard");
+            navigate("/admin");
 
           } else if (response?.data?.role == "customer") {
             await localStorage.setItem("token", response?.data?.jwtToken)
@@ -88,7 +88,7 @@ export default function LoginDrawer() {
         };
         delete dataToSubmit.confirmPassword;
         const response = await registerApi(dataToSubmit);
-        if (response?.status === "success") {
+        if (response?.status === "Success") {
           message.success(response.message);
           setFormData({
             name: "",
