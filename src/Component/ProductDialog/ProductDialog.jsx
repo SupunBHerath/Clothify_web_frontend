@@ -129,7 +129,7 @@ const ProductDialog = ({ open, onClose, product }) => {
 
 
             <Typography variant="subtitle1" color="primary" gutterBottom>
-              Price: ${selectedSize?.price?.toFixed(2)}
+              Price: Rs {selectedSize?.price?.toFixed(2)}
             </Typography>
 
             <Typography variant="subtitle1">Select Size</Typography>

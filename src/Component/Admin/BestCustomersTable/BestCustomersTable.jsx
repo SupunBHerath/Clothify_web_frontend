@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Tag } from "antd";
-import { getUserBtProductQty } from "../../../Service/UserDetailsApi";
+import { getUserByProductQty } from "../../../Service/UserDetailsApi";
 
 const BestCustomersTable = () => {
   const [data, setData] = useState([]);
@@ -8,8 +8,7 @@ const BestCustomersTable = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const result = await getUserBtProductQty();
-        console.log(result.data);
+        const result = await getUserByProductQty();
         
         if (result.status == 200) {
 

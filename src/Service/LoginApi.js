@@ -34,8 +34,8 @@ export const accountStatusUpdate = async (id, status) => {
     const jwt = localStorage.getItem("token");
     try {
         const result = await axios.put(
-            `/auth/account-status/${id}`, 
-            { status },
+            `/auth/account-status/${id}/${status}`, 
+            {},
             {
                 headers: {
                     Authorization: `Bearer ${jwt}`,

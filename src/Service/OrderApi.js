@@ -42,8 +42,9 @@ export const updateStatusById = async (id, status) => {
 
 export const deleteOrderByOrderId = async (id) => {
     const jwt = localStorage.getItem("token");
+    
     try {
-        const result = await axios.delete(`/order/${id}`, {
+        const result = await axios.delete(`/order/${id}`,{
             headers: {
                 Authorization: `Bearer ${jwt}`,
             },

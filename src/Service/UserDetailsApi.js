@@ -33,7 +33,7 @@ export const updateUserById = async (id, user) => {
 export const getUserByProductQty = async () => {
     try {
         const result = await axios.get(`/user/qty`);
-        return result.data;
+        return result;
     } catch (error) {
         console.error("Error fetching users by product quantity:", error);
         throw error;

@@ -333,7 +333,7 @@ const CheckoutPage = () => {
                             <FormControlLabel value="Online Payment" control={<Radio />} label="Card Payment" />
                         </RadioGroup>
 
-                        {fData.paymentMethod === 'onlinePayment' && (
+                        {fData.paymentMethod === 'Online Payment' && (
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
