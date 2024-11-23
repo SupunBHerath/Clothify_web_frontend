@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Typography, Button, Space, Drawer } from "antd";
-import { MenuOutlined, UserOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, MenuOutlined, UserOutlined } from "@ant-design/icons";
 import LoginDrawer from "../DrawerLogin/DrawerLogin";
 import ShopingCardDrawer from "../ShopingCradDrawer/ShopingCardDrawer";
 import { useNavigate } from "react-router-dom";
@@ -138,13 +138,13 @@ const NavBar = () => {
                 <Button
                   type="link"
                   onClick={async () => {
-                    navigate("/"); 
+                    navigate("/");
                     setTimeout(() => {
                       const element = document.getElementById("contactus");
                       if (element) {
                         element.scrollIntoView({ behavior: "smooth" });
                       }
-                    }, 500);  
+                    }, 500);
                   }}
                   style={{ color: "white", fontWeight: "700", fontSize: 18 }}
                 >
@@ -157,7 +157,7 @@ const NavBar = () => {
                 style={{
                   color: "black",
                   cursor: "pointer",
-                  marginRight: "20px",
+                  marginRight: "50px",
                 }}
               >
                 <ShopingCardDrawer />
@@ -167,7 +167,7 @@ const NavBar = () => {
                   style={{
                     color: "black",
                     cursor: "pointer",
-                    marginRight: "20px",
+                    marginRight: "30px",
                   }}
                 >
                   <LoginDrawer />
@@ -178,10 +178,18 @@ const NavBar = () => {
                   style={{
                     color: "black",
                     cursor: "pointer",
-                    marginRight: "20px",
+                    marginRight: "30px",
                   }}
                 >
-                  <UserOutlined className="text-white fw-bolder" onClick={handleProfile} />
+                  <UserOutlined
+                    className={`text-white fw-bolder active-icon}`}
+                    onClick={handleProfile}
+                    style={{
+                      border:  '3px solid green',
+                      borderRadius: '50%', 
+                      padding: '5px',
+                    }}
+                  />
                 </Space>
               )}
             </div>

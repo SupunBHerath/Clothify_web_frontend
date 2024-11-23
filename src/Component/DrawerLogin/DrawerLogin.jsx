@@ -70,10 +70,12 @@ export default function LoginDrawer() {
           login(response?.data?.role);
           if (response?.data?.role == "admin") {
             await localStorage.setItem("token", response?.data?.jwtToken)
+            localStorage.setItem("active",true)
             navigate("/admin");
 
           } else if (response?.data?.role == "customer") {
             await localStorage.setItem("token", response?.data?.jwtToken)
+            localStorage.setItem("active",true)
             navigate("/user/");
           }
 

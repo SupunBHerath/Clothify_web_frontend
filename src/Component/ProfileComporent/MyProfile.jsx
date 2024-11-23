@@ -14,9 +14,9 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { getUserById, updateUserById } from "../../Service/UserDetailsApi";
-import { message } from "antd";
+import { message, Tag } from "antd";
 import { updatePassword } from "../../Service/LoginApi";
-import { Password } from "@mui/icons-material";
+import { CheckCircleOutlined, Password } from "@mui/icons-material";
 
 const MyProfile = ({ cusID, email }) => {
   const [editableName, setEditableName] = useState(null);
@@ -30,12 +30,16 @@ const MyProfile = ({ cusID, email }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [active, setActive] = useState("Offline");
   const [dataLoading, setDataLoading] = useState(true);
- const[address,setAddress]= useState(null)
+  const[address,setAddress]= useState(null)
 
   const fechUserData = async () => {
     const user = await getUserById(cusID);
     if (user?.id == cusID) {
+      setActive(user.onlineStatus)
+      console.log(user);
+      
       setUserData(user);
       setEditableBillingAddress(user.billingAddress)
       setEditableName(user.name)
@@ -123,6 +127,13 @@ const MyProfile = ({ cusID, email }) => {
           >
             My Profile
           </Typography>
+          {active === 'Online' && (<Tag 
+           style={{
+            position: "absolute",
+            top: 16,
+            left: 16,
+          }}
+           color="success">Online </Tag>)}
 
           <IconButton
             onClick={() => setIsEditDialogOpen(true)}

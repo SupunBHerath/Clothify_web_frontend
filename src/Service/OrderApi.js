@@ -23,3 +23,14 @@ export const deleteOrderByOrderId =async(id) =>{
     return result;
 
 }
+export const OrderCounts =async() =>{
+    const result = await axios.get(`/order/count`)
+    return result;
+
+}
+export const TotalRevenue =async() =>{
+    const result = await axios.get(`/order/price`)
+    return result;
+
+}
+

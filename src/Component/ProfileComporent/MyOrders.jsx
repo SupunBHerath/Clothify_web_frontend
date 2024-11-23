@@ -15,8 +15,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TablePagination from '@mui/material/TablePagination';
 import { deleteOrderByOrderId, getOrdersById } from '../../Service/OrderApi';
-import { Button, message } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { Button, message, Tag } from 'antd';
+import { CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined, SyncOutlined } from '@ant-design/icons';
 
 function createData(id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod) {
     return { id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod };
@@ -45,8 +45,13 @@ function Row(props) {
                 <TableCell >{row?.billingAddress}</TableCell>
                 <TableCell>{row.orderDetails?.length}</TableCell>
                 <TableCell >{row?.orderDetails?.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)}</TableCell>
-                <TableCell >{row?.status}</TableCell>
-                <TableCell ><Button icon={<DeleteOutlined />} type='dashed' color='danger' disabled={row.status != "Pending"} onClick={() => handleDeleteOrder(row.id)} danger></Button></TableCell>
+                <TableCell>
+                    {row?.status === 'Processing' && (<Tag icon={<SyncOutlined spin />} color="processing">Processing </Tag>)}
+                    {row?.status === 'Delivering' && (<Tag icon={<SyncOutlined spin />} color="pink">Delivering</Tag>)}
+                    {row?.status === 'Delivered' && (<Tag icon={<CheckCircleOutlined />} color="success">Delivered </Tag>)}
+                    {row?.status === 'Rejected' && (<Tag icon={<CloseCircleOutlined />} color="error"> Rejected </Tag>)}
+                </TableCell>
+                <TableCell ><Button icon={<DeleteOutlined />} type='dashed' color='danger' disabled={row.status != "Processing"} onClick={() => handleDeleteOrder(row.id)} danger></Button></TableCell>
 
             </TableRow>
             <TableRow >
@@ -142,41 +147,55 @@ export default function MyOrders({ cusID }) {
 
     const handleDeleteOrder = async (id) => {
         try {
-            const res = await deleteOrderByOrderId(id)
-            if (res.data == true) {
-                message.success("Your Order Delete Success...")
-                getProductData()
-            } else if (res.data?.status == "Failed") {
+            const res = await deleteOrderByOrderId(id);
+            if (res.data === true) {
+                message.success("Your Order Delete Success...");
+                await getProductData(); 
+            } else if (res.data?.status === "Failed") {
                 message.error(res.data?.message);
             } else {
-                message.error("Your Order Delete fail....");
-
+                message.error("Your Order Delete failed.");
             }
         } catch (e) {
-            console.error(e);
-
+            console.error("Error deleting order:", e);
+            message.error("An error occurred while deleting the order.");
         }
-    }
+    };
+
     const getProductData = async () => {
         try {
             const res = await getOrdersById(cusID);
             let value = res.data;
 
-            if (value.length > 0) {
+            if (value && value.length > 0) {
                 value = value.sort((a, b) => b.id - a.id);
 
-                const formattedRows = value.map(item =>
-                    createData(item.id, item.cusId, item.date, item.status, item.billingAddress, item.phoneNumber, item.orderDetails, item.invoiceNumber, item.paymentMethod)
+                const formattedRows = value.map((item) =>
+                    createData(
+                        item.id,
+                        item.cusId,
+                        item.date,
+                        item.status,
+                        item.billingAddress,
+                        item.phoneNumber,
+                        item.orderDetails,
+                        item.invoiceNumber,
+                        item.paymentMethod
+                    )
                 );
-                setRows(formattedRows);
+                setRows([...formattedRows]);
+            } else {
+                setRows([]);
             }
         } catch (error) {
-            console.error('Error fetching product data:', error);
+            console.error("Error fetching product data:", error);
         }
     };
+
     React.useEffect(() => {
         getProductData();
     }, []);
+
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };

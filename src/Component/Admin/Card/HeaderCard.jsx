@@ -4,22 +4,44 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
+  DollarCircleOutlined,
   ExclamationCircleOutlined,
   ShoppingCartOutlined,
   ShoppingOutlined,
   SyncOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { OrderCounts, TotalRevenue } from '../../../Service/OrderApi';
 
 const HeaderCard = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [count, setCount] = useState(null)
+  const [totalPrice, setTotalPrice] = useState(0)
+ 
+  useEffect(() => {
+    const feachCount = async () => {
+      const res = await OrderCounts();
+     const revenue = await TotalRevenue()
+      if (res.status == 200) {
+        setCount(res.data)
+      } else {
+        setCount(null)
+      }
+      if (revenue.status == 200) {
+        setTotalPrice(revenue.data)
+      }else{
+        setTotalPrice(0)
+      }
 
+    }
+    feachCount()
+  }, []);
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDateTime(new Date());
-    }, 1000); 
+    }, 1000);
 
-    return () => clearInterval(interval); 
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -49,25 +71,25 @@ const HeaderCard = () => {
               <Tag icon={<SyncOutlined spin />} color="processing">
                 Processing
               </Tag>
-              <h5 style={{ margin: 0 }}>6</h5>
+              <h5 style={{ margin: 0 }}>{count?.processing}</h5>
             </div>
             <div style={{ flex: '1', minWidth: '100px', textAlign: 'center' }}>
               <Tag icon={<SyncOutlined spin />} color="pink">
                 Delivering
               </Tag>
-              <h5 style={{ margin: 0 }}>6</h5>
+              <h5 style={{ margin: 0 }}>{count?.delivering}</h5>
             </div>
             <div style={{ flex: '1', minWidth: '100px', textAlign: 'center' }}>
               <Tag icon={<CheckCircleOutlined />} color="success">
                 Delivered
               </Tag>
-              <h5 style={{ margin: 0 }}>6</h5>
+              <h5 style={{ margin: 0 }}>{count?.delivered}</h5>
             </div>
             <div style={{ flex: '1', minWidth: '100px', textAlign: 'center' }}>
               <Tag icon={<CloseCircleOutlined />} color="error">
                 Rejected
               </Tag>
-              <h5 style={{ margin: 0 }}>6</h5>
+              <h5 style={{ margin: 0 }}>{count?.rejected}</h5>
             </div>
           </div>
 
@@ -77,9 +99,9 @@ const HeaderCard = () => {
         <Card
           title={
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <UserOutlined style={{ fontSize: '18px', marginRight: '8px', color: '#f5222d' }} />
-              <span>Total Users</span>
-            </div>
+            <DollarCircleOutlined style={{ fontSize: '18px', marginRight: '8px', color: '#1890ff' }} />
+            <span>Total  Revenue</span>
+          </div>
           }
           bordered
           style={{
@@ -90,17 +112,21 @@ const HeaderCard = () => {
             flexDirection: 'column',
             height: '180px',
             justifyContent: 'space-between',
+            padding: '16px',
           }}
         >
-          <p>Currently active and registered users.</p>
+          <div>
+            <h3 className='text-center'>
+              <strong style={{color:"#F68714"}}>LKR : {totalPrice}.00</strong>
+            </h3>
+          </div>
         </Card>
       </Col>
-      {/* Selling Products Card */}
       <Col xs={24} sm={12} md={8} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Card
           title={
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <ClockCircleOutlined  style={{ fontSize: '18px', marginRight: '8px', color: '#52c41a' }} />
+              <ClockCircleOutlined style={{ fontSize: '18px', marginRight: '8px', color: '#52c41a' }} />
               <span>Time And Date</span>
             </div>
           }

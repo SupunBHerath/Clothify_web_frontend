@@ -24,8 +24,8 @@ import axios from 'axios';
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dklmxsahg/image/upload";
 const UPLOAD_PRESET = "clothify_img";
 
-function createData(id, name, description, subCategory, images, sizes, category, status) {
-  return { id, name, description, subCategory, images, sizes, category, status };
+function createData(id, name, description, subCategory, images, sizes, category, status,isnew) {
+  return { id, name, description, subCategory, images, sizes, category, status,isnew};
 }
 
 function Row(props) {
@@ -48,6 +48,8 @@ function Row(props) {
         <TableCell>{row.name}</TableCell>
         <TableCell>{row.category}</TableCell>
         <TableCell>{row.subCategory}</TableCell>
+        {!row.isnew &&  <TableCell>NO</TableCell>}
+        {row.isnew &&  <TableCell>Yes</TableCell>}
         <TableCell>{row.status}</TableCell>
         <TableCell align="center">
           <IconButton color="warning" aria-label="edit" onClick={() => openEditModal(row)}>
@@ -129,7 +131,7 @@ export default function ProductTable() {
       const data = res.data;
       if (data.length > 0) {
         const formattedRows = data.map((item) =>
-          createData(item.id, item.name, item.description, item.subCategory, item.images, item.sizes, item.category, item.status)
+          createData(item.id, item.name, item.description, item.subCategory, item.images, item.sizes, item.category, item.status,item.new)
         );
         setRows(formattedRows);
       }
@@ -174,6 +176,7 @@ export default function ProductTable() {
       status: "",
       sizes: "",
       images: "",
+      new:"",
     });
   }
   const openEditModal = (product) => {
@@ -191,6 +194,7 @@ export default function ProductTable() {
       status: product.status,
       sizes: product.sizes,
       images: imageList,
+      new: product.new
     });
 
   };
@@ -337,6 +341,7 @@ export default function ProductTable() {
                   <TableCell>Name</TableCell>
                   <TableCell>Category</TableCell>
                   <TableCell>Sub-Category</TableCell>
+                  <TableCell>Is New</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
@@ -422,6 +427,12 @@ export default function ProductTable() {
             <Select>
               <Select.Option value="Available">Available</Select.Option>
               <Select.Option value="Out of Stock">Out of Stock</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="Is New" name="new" rules={[{ required: true }]}>
+            <Select>
+              <Select.Option value={true}>Yes</Select.Option>
+              <Select.Option value={false} >No</Select.Option>
             </Select>
           </Form.Item>
 

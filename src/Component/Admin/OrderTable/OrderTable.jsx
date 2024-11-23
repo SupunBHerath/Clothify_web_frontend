@@ -15,8 +15,9 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TablePagination from '@mui/material/TablePagination';
 import EditIcon from '@mui/icons-material/Edit';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { Button, message, Modal, Popconfirm, Select } from 'antd';
+import { Button, message, Modal, Popconfirm, Select, Tag } from 'antd';
 import { getAllOrders, updateStatusById } from '../../../Service/OrderApi';
+import { CheckCircleOutlined, CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
 
 function createData(id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod) {
     return { id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod };
@@ -81,7 +82,13 @@ function Row(props) {
                     <TableCell >{row?.phoneNumber}</TableCell>
                     <TableCell>{row.orderDetails?.length}</TableCell>
                     <TableCell >{row?.orderDetails?.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)}</TableCell>
-                    <TableCell >{row?.status}</TableCell>
+                    <TableCell>
+                        {row?.status === 'Processing' && (<Tag icon={<SyncOutlined spin />} color="processing">Processing </Tag>)}
+                        {row?.status === 'Delivering' && (<Tag icon={<SyncOutlined spin />} color="pink">Delivering</Tag>)}
+                        {row?.status === 'Delivered' && (<Tag icon={<CheckCircleOutlined />} color="success">Delivered </Tag>)}
+                        {row?.status === 'Rejected' && ( <Tag icon={<CloseCircleOutlined />} color="error"> Rejected </Tag>)}
+                    </TableCell>
+
                     <TableCell align="center">
                         <IconButton onClick={() => showModal(row)} color="warning" aria-label="edit">
                             <EditIcon />
@@ -191,10 +198,10 @@ function Row(props) {
                                     style={{ width: '100%' }}
                                     onChange={handleChange}
                                     options={[
-                                        { value: 'Pending', label: 'Pending' },
+                                        { value: 'Processing', label: 'Processing' },
                                         { value: 'Delivering', label: 'Delivering' },
                                         { value: 'Delivered', label: 'Delivered' },
-                                        { value: 'Cancelled', label: 'Cancelled' },
+                                        { value: 'Rejected', label: 'Rejected' },
                                     ]}
                                 />
                             </td>
@@ -214,9 +221,10 @@ export default function OrderTable() {
     const fetchOrders = async () => {
         try {
             const res = await getAllOrders();
-            const data = res.data;
-            if (data.length > 0) {
-                const formattedRows = data.map((item) =>
+            let value = res.data;
+            if (value && value.length > 0) {
+                value = value.sort((a, b) => b.id - a.id);
+                const formattedRows = value.map((item) =>
                     createData(item.id, item.cusId, item.date, item.status, item.billingAddress, item.phoneNumber, item.orderDetails, item.invoiceNumber, item.paymentMethod)
                 );
                 setRows(formattedRows);
