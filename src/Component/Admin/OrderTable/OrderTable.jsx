@@ -18,6 +18,8 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { Button, message, Modal, Popconfirm, Select, Tag } from 'antd';
 import { getAllOrders, updateStatusById } from '../../../Service/OrderApi';
 import { CheckCircleOutlined, CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import jsPDF from 'jspdf'; 
+import 'jspdf-autotable'; 
 
 function createData(id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod) {
     return { id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod };
@@ -60,6 +62,37 @@ function Row(props) {
     const handleChange = (value) => {
         setChangeStatus(value);
     };
+    const generatePDF = () => {
+        const doc = new jsPDF();
+
+        doc.setFontSize(18);
+        doc.text(`Order Details: CS${row.id}`, 14, 20);
+
+        doc.setFontSize(12);
+        doc.text(`Date: ${row.date}`, 14, 30);
+        doc.text(`Invoice Number: ${row.invoiceNumber}`, 14, 40);
+        doc.text(`Payment Method: ${row.paymentMethod}`, 14, 50);
+        doc.text(`Billing Address: ${row.billingAddress}`, 14, 60);
+        doc.text(`Phone Number: ${row.phoneNumber}`, 14, 70);
+        doc.text(`Total Items: ${row.orderDetails.length}`, 14, 80);
+        doc.text(`Total Price: RS ${row.orderDetails.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)}`, 14, 90);
+
+        const tableData = row.orderDetails.map((detail) => [
+            detail.productId,
+            detail.productName,
+            detail.productSize,
+            detail.qty,
+            (detail.price * detail.qty).toFixed(2),
+        ]);
+
+        doc.autoTable({
+            head: [['Product ID', 'Product Name', 'Size', 'Qty', 'Total Price (RS)']],
+            body: tableData,
+            startY: 100,
+        });
+
+        doc.save(`Order_CS${row.id}.pdf`);
+    };
 
     return (
         <>
@@ -93,9 +126,9 @@ function Row(props) {
                         <IconButton onClick={() => showModal(row)} color="warning" aria-label="edit">
                             <EditIcon />
                         </IconButton>
-                        <IconButton color="primary" aria-label="download">
-                            <FileDownloadIcon />
-                        </IconButton>
+                        <IconButton onClick={generatePDF} color="primary" aria-label="download">
+                        <FileDownloadIcon />
+                    </IconButton>
                     </TableCell>
                 </TableRow>
                 <TableRow>
@@ -105,7 +138,7 @@ function Row(props) {
                                 <Typography variant="h6" gutterBottom>
                                     Order Details
                                 </Typography>
-                                <Table size="small" aria-label="order details">
+                                <Table size="small" aria-label="order details" className='bg-body-tertiary'>
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Product ID</TableCell>

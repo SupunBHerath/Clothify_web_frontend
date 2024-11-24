@@ -17,6 +17,9 @@ import TablePagination from '@mui/material/TablePagination';
 import { deleteOrderByOrderId, getOrdersById } from '../../Service/OrderApi';
 import { Button, message, Tag } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined, SyncOutlined } from '@ant-design/icons';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import jsPDF from 'jspdf'; 
+import 'jspdf-autotable'; 
 
 function createData(id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod) {
     return { id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod };
@@ -25,7 +28,37 @@ function createData(id, cusId, date, status, billingAddress, phoneNumber, orderD
 function Row(props) {
     const { row, handleDeleteOrder } = props;
     const [open, setOpen] = React.useState(false);
+    const generatePDF = () => {
+        const doc = new jsPDF();
 
+        doc.setFontSize(18);
+        doc.text(`Order Details: CS${row.id}`, 14, 20);
+
+        doc.setFontSize(12);
+        doc.text(`Date: ${row.date}`, 14, 30);
+        doc.text(`Invoice Number: ${row.invoiceNumber}`, 14, 40);
+        doc.text(`Payment Method: ${row.paymentMethod}`, 14, 50);
+        doc.text(`Billing Address: ${row.billingAddress}`, 14, 60);
+        doc.text(`Phone Number: ${row.phoneNumber}`, 14, 70);
+        doc.text(`Total Items: ${row.orderDetails.length}`, 14, 80);
+        doc.text(`Total Price: RS ${row.orderDetails.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)}`, 14, 90);
+
+        const tableData = row.orderDetails.map((detail) => [
+            detail.productId,
+            detail.productName,
+            detail.productSize,
+            detail.qty,
+            (detail.price * detail.qty).toFixed(2),
+        ]);
+
+        doc.autoTable({
+            head: [['Product ID', 'Product Name', 'Size', 'Qty', 'Total Price (RS)']],
+            body: tableData,
+            startY: 100,
+        });
+
+        doc.save(`Order_CS${row.id}.pdf`);
+    };
 
     return (
         <React.Fragment >
@@ -51,8 +84,11 @@ function Row(props) {
                     {row?.status === 'Delivered' && (<Tag icon={<CheckCircleOutlined />} color="success">Delivered </Tag>)}
                     {row?.status === 'Rejected' && (<Tag icon={<CloseCircleOutlined />} color="error"> Rejected </Tag>)}
                 </TableCell>
-                <TableCell ><Button icon={<DeleteOutlined />} type='dashed' color='danger' disabled={row.status != "Processing"} onClick={() => handleDeleteOrder(row.id)} danger></Button></TableCell>
-
+                <TableCell ><Button icon={<DeleteOutlined />} type='dashed' color='danger' disabled={row.status != "Processing"} onClick={() => handleDeleteOrder(row.id)} danger></Button>
+                    <IconButton onClick={generatePDF} color="primary" aria-label="download">
+                        <FileDownloadIcon />
+                    </IconButton>
+                </TableCell>
             </TableRow>
             <TableRow >
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6} >
@@ -150,7 +186,7 @@ export default function MyOrders({ cusID }) {
             const res = await deleteOrderByOrderId(id);
             if (res.data === true) {
                 message.success("Your Order Delete Success...");
-                await getProductData(); 
+                await getProductData();
             } else if (res.data?.status === "Failed") {
                 message.error(res.data?.message);
             } else {
