@@ -85,12 +85,12 @@ const HeaderCard = () => {
               </Tag>
               <h5 style={{ margin: 0 }}>{count?.delivered}</h5>
             </div>
-            <div style={{ flex: '1', minWidth: '100px', textAlign: 'center' }}>
+            {/* <div style={{ flex: '1', minWidth: '100px', textAlign: 'center' }}>
               <Tag icon={<CloseCircleOutlined />} color="error">
                 Rejected
               </Tag>
               <h5 style={{ margin: 0 }}>{count?.rejected}</h5>
-            </div>
+            </div> */}
           </div>
 
         </Card>

@@ -98,6 +98,7 @@ export default function LoginDrawer() {
             password: "",
             confirmPassword: "",
           });
+          setIsSignUp(false)
           toggleDrawer(false);
         } else {
           message.error(response.message);
@@ -202,9 +203,9 @@ export default function LoginDrawer() {
         )}
         <Button
           variant="contained"
-          color="primary"
+          color="#7B430A"
           fullWidth
-          sx={{ mt: 2 }}
+          sx={{ mt: 2,backgroundColor:"#F48614" }}
           type="submit"
         >
           {isSignUp ? "Sign Up" : "Login"}
@@ -219,7 +220,7 @@ export default function LoginDrawer() {
             Already have an account?{" "}
             <Typography
               component="span"
-              sx={{ cursor: "pointer", color: "blue" }}
+              sx={{ cursor: "pointer", color: "#F48614" }}
               onClick={handleToggleForm}
             >
               Login
@@ -233,7 +234,7 @@ export default function LoginDrawer() {
             Don't have an account?{" "}
             <Typography
               component="span"
-              sx={{ cursor: "pointer", color: "blue" }}
+              sx={{ cursor: "pointer", color: "#F48614" }}
               onClick={handleToggleForm}
             >
               Sign Up

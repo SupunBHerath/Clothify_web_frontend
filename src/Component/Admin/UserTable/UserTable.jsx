@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Tag, Button, Popconfirm, Modal, Select, message } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { getUsers } from "../../../Service/UserDetailsApi";
+import { deleteUserAccount, getUsers } from "../../../Service/UserDetailsApi";
 import { accountStatusUpdate } from "../../../Service/LoginApi";
 
 const UserTable = () => {
@@ -30,6 +30,7 @@ const UserTable = () => {
         if (result.status === "200") {
           const formattedData = result.data.map((user) => ({
             key: user.id.toString(),
+            id: user.id.toString(),
             name: user.name || "N/A",
             email: user.email || "N/A",
             phoneNumber: user.phoneNumber || "Customer",
@@ -54,7 +55,7 @@ const UserTable = () => {
     setSelectedUser(user);
     setNewStatus(user.accountStatus);
     setIsModalVisible(true);
-    
+
   };
 
   const handleOk = async () => {
@@ -69,7 +70,7 @@ const UserTable = () => {
       )
     );
     console.log(selectedUser);
-    
+
     try {
       const res = await accountStatusUpdate(selectedUser.key, newStatus)
       if (res.status == 200) {
@@ -88,12 +89,33 @@ const UserTable = () => {
     setIsModalVisible(false);
   };
 
-  const handleDelete = (key) => {
-    setData((prevData) => prevData.filter((item) => item.key !== key));
-    message.success("User deleted successfully!");
+  const handleDelete = async (key) => {
+    try {
+      const res = await deleteUserAccount(key)
+      if (res) {
+        setData((prevData) => prevData.filter((item) => item.key !== key));
+        message.success("User deleted successfully!");
+      } else if(res?.status == "Failed") {
+        message.error(res.message)
+        localStorage.removeItem("token")
+      }else{
+        message.error("Error Found Plz Contact Admin..")
+
+      }
+    } catch (e) {
+      console.error(e);
+
+    }
+
   };
 
   const columns = [
+    {
+      title: "Cus ID",
+      dataIndex: "id",
+      key: "id",
+
+    },
     {
       title: "Name",
       dataIndex: "name",
@@ -156,12 +178,12 @@ const UserTable = () => {
   return (
     <div style={{ padding: "20px" }}>
       <hr />
-      <Table 
-       style={{
-        border: "2px solid #F68714", 
-        borderRadius: "8px", 
-      }}
-      dataSource={data} columns={columns} />
+      <Table
+        style={{
+          border: "2px solid #F68714",
+          borderRadius: "8px",
+        }}
+        dataSource={data} columns={columns} />
 
       <Modal
         title="Edit Account Status"

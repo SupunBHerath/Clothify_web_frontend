@@ -12,30 +12,26 @@ function Footer() {
             <h5 className="text-white">QUICK LINKS</h5>
             <ul className="list-unstyled mt-3">
               <li>
-                <Link to="/women" className="footer-link">
+                <Link to="category?c=Women" className="footer-link">
                   WOMEN
                 </Link>
               </li>
               <li>
-                <Link to="/men" className="footer-link">
+                <Link to="category?c=Men" className="footer-link">
                   MEN
                 </Link>
               </li>
               <li>
-                <Link to="/baby" className="footer-link">
+                <Link to="category?c=Baby" className="footer-link">
                   BABY
                 </Link>
               </li>
               <li>
-                <Link to="/kids" className="footer-link">
+                <Link to="category?c=Kids" className="footer-link">
                   KIDS
                 </Link>
               </li>
-              <li>
-                <Link to="/sale" className="footer-link">
-                  SALE
-                </Link>
-              </li>
+              
             </ul>
           </div>
 
@@ -44,17 +40,17 @@ function Footer() {
             <h5 className="text-white">INFORMATION</h5>
             <ul className="list-unstyled mt-3">
               <li>
-                <Link to="/shipping-policy" className="footer-link">
+                <Link to="#" className="footer-link">
                   Shipping Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms-conditions" className="footer-link">
+                <Link to="#" className="footer-link">
                   Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link to="/privacy-policy" className="footer-link">
+                <Link to="#" className="footer-link">
                   Privacy Policy
                 </Link>
               </li>
@@ -66,12 +62,7 @@ function Footer() {
             <h5 className="text-white">COMPANY</h5>
             <ul className="list-unstyled mt-3">
               <li>
-                <Link to="/about-us" className="footer-link">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact-us" className="footer-link">
+                <Link to="#contact-us" className="footer-link">
                   Contact Us
                 </Link>
               </li>

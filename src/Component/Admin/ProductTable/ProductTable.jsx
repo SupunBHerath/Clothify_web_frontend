@@ -24,8 +24,8 @@ import axios from 'axios';
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dklmxsahg/image/upload";
 const UPLOAD_PRESET = "clothify_img";
 
-function createData(id, name, description, subCategory, images, sizes, category, status,isnew) {
-  return { id, name, description, subCategory, images, sizes, category, status,isnew};
+function createData(id, name, description, subCategory, images, sizes, category, status, isnew) {
+  return { id, name, description, subCategory, images, sizes, category, status, isnew };
 }
 
 function Row(props) {
@@ -48,8 +48,8 @@ function Row(props) {
         <TableCell>{row.name}</TableCell>
         <TableCell>{row.category}</TableCell>
         <TableCell>{row.subCategory}</TableCell>
-        {!row.isnew &&  <TableCell>NO</TableCell>}
-        {row.isnew &&  <TableCell>Yes</TableCell>}
+        {!row.isnew && <TableCell>NO</TableCell>}
+        {row.isnew && <TableCell>Yes</TableCell>}
         <TableCell>{row.status}</TableCell>
         <TableCell align="center">
           <IconButton color="warning" aria-label="edit" onClick={() => openEditModal(row)}>
@@ -61,7 +61,7 @@ function Row(props) {
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7} className='bg-body-tertiary'>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom>
@@ -124,14 +124,14 @@ export default function ProductTable() {
   const [subCategoryOptions, setSubCategoryOptions] = React.useState([]);
   const [category, setCategory] = React.useState('');
   const [isAddProduct, setIsAddProduct] = React.useState(false);
-  const[isLoading , setIsLoading]= React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const fetchOrders = async () => {
     try {
       const res = await getProduct();
       const data = res.data;
       if (data.length > 0) {
         const formattedRows = data.map((item) =>
-          createData(item.id, item.name, item.description, item.subCategory, item.images, item.sizes, item.category, item.status,item.new)
+          createData(item.id, item.name, item.description, item.subCategory, item.images, item.sizes, item.category, item.status, item.new)
         );
         setRows(formattedRows);
       }
@@ -176,7 +176,7 @@ export default function ProductTable() {
       status: "",
       sizes: "",
       images: "",
-      new:"",
+      new: "",
     });
   }
   const openEditModal = (product) => {
@@ -206,27 +206,27 @@ export default function ProductTable() {
   };
 
   const handleEditSubmit = async (values) => {
-  
+
     try {
       setIsLoading(true);
-  
+
       const newFiles = [];
       const existingUrls = [];
-  
+
       imageList.forEach((fileWrapper) => {
         if (fileWrapper.originFileObj) {
-          newFiles.push(fileWrapper.originFileObj); 
+          newFiles.push(fileWrapper.originFileObj);
         } else if (fileWrapper.url) {
-          existingUrls.push(fileWrapper.url); 
+          existingUrls.push(fileWrapper.url);
         }
       });
-  
+
       const uploadedImages = await Promise.all(
         newFiles.map(async (file) => {
           const formData = new FormData();
           formData.append("file", file);
           formData.append("upload_preset", UPLOAD_PRESET);
-  
+
           try {
             const response = await axios.post(CLOUDINARY_URL, formData, {
               headers: { "Content-Type": "multipart/form-data" },
@@ -238,18 +238,18 @@ export default function ProductTable() {
           }
         })
       );
-  
+
       const newUrls = uploadedImages.filter((url) => url !== null);
-  
+
       const allUrls = [...existingUrls, ...newUrls];
       const formattedImages = allUrls.map((url) => ({ url }));
-   
+
       const Product = {
         ...selectedProduct,
         ...values,
         images: formattedImages,
       };
-      
+
       if (isAddProduct) {
         const res = await AddProduct(Product);
         if (res.data) {
@@ -429,12 +429,7 @@ export default function ProductTable() {
               <Select.Option value="Out of Stock">Out of Stock</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item label="Is New" name="new" rules={[{ required: true }]}>
-            <Select>
-              <Select.Option value={true}>Yes</Select.Option>
-              <Select.Option value={false} >No</Select.Option>
-            </Select>
-          </Form.Item>
+
 
           <Form.Item label="Sizes" name="sizes">
             <Form.List name="sizes">
@@ -480,6 +475,13 @@ export default function ProductTable() {
             </Upload>
           </Form.Item>
 
+          <Form.Item label="Is New" name="new" rules={[{ required: true }]}>
+            <Select>
+              <Select.Option value={true}>Yes</Select.Option>
+              <Select.Option value={false} >No</Select.Option>
+            </Select>
+          </Form.Item>
+          
           <Form.Item>
             <Button type="primary" htmlType="submit" className='w-100' loading={isLoading}>
               Submit

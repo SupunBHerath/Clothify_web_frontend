@@ -22,7 +22,7 @@ const GuestLayout = () => (
         flexShrink: 0,
       }}
     >
-      {/* <Footer /> */}
+   {location.pathname !== "/profile" && <Footer />}
     </footer>
   </div>
 );
