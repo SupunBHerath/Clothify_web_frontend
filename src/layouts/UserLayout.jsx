@@ -2,8 +2,9 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import NavBar from "../Component/NaviBar/NavBar";
 import Footer from "../Component/Footer/Footer";
-
+import { useLocation } from "react-router-dom";
 export default function UserLayout() {
+  const location = useLocation();
   return (
     <div
       style={{
@@ -26,7 +27,7 @@ export default function UserLayout() {
         }}
       >
         <br />
-        {/* <Footer /> */}
+        {location.pathname !== "/profile" && <Footer />}
       </footer>
     </div>
 

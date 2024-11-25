@@ -29,7 +29,7 @@ const AppRoutes = () => {
           && pathname !== '/user/category'
           && pathname !== '/user/profile'
           && pathname !== '/user/checkout'
-          && pathname !== '/user/d') {
+          ) {
           navigate('/user', { replace: true });
         }
       } else {

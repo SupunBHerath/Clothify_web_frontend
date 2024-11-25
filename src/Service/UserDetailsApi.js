@@ -39,3 +39,18 @@ export const getUserByProductQty = async () => {
         throw error;
     }
 };
+
+export const deleteUserAccount = async (id) => {
+    const jwt = localStorage.getItem("token");
+    try {
+        const result = await axios.delete(`/user/${id}`,{
+            headers: {
+                Authorization: `${jwt}`,
+            },
+        });
+        return result.data;
+    } catch (error) {
+        console.error("Error fetching users by product quantity:", error);
+        throw error;
+    }
+};

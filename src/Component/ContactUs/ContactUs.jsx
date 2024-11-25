@@ -39,20 +39,20 @@ const ContactUs = () => {
             />
           </div>
           <Title level={3} style={{ marginBottom: "20px", color: "#333" }}>
-            Clothify Store
+          Clothify Store (PVT) Ltd. 
           </Title>
           <Space direction="vertical" size="middle">
             <Space>
               <EnvironmentOutlined style={{ color: "#1890ff", fontSize: "20px" }} />
-              <Text>123 Fashion Avenue, New York, NY 10001</Text>
+              <Text>Clothify Store , Panadura</Text>
             </Space>
             <Space>
               <PhoneOutlined style={{ color: "#1890ff", fontSize: "20px" }} />
-              <Text>(123) 456-7890</Text>
+              <Text>+94 123 456 789 </Text>
             </Space>
             <Space>
               <MailOutlined style={{ color: "#1890ff", fontSize: "20px" }} />
-              <Text>contact@clothify.com</Text>
+              <Text>clothify@sample.com</Text>
             </Space>
           </Space>
         </Col>

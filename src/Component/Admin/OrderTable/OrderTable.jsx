@@ -18,8 +18,8 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { Button, message, Modal, Popconfirm, Select, Tag } from 'antd';
 import { getAllOrders, updateStatusById } from '../../../Service/OrderApi';
 import { CheckCircleOutlined, CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
-import jsPDF from 'jspdf'; 
-import 'jspdf-autotable'; 
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 function createData(id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod) {
     return { id, cusId, date, status, billingAddress, phoneNumber, orderDetails, invoiceNumber, paymentMethod };
@@ -119,7 +119,7 @@ function Row(props) {
                         {row?.status === 'Processing' && (<Tag icon={<SyncOutlined spin />} color="processing">Processing </Tag>)}
                         {row?.status === 'Delivering' && (<Tag icon={<SyncOutlined spin />} color="pink">Delivering</Tag>)}
                         {row?.status === 'Delivered' && (<Tag icon={<CheckCircleOutlined />} color="success">Delivered </Tag>)}
-                        {row?.status === 'Rejected' && ( <Tag icon={<CloseCircleOutlined />} color="error"> Rejected </Tag>)}
+                        {row?.status === 'Rejected' && (<Tag icon={<CloseCircleOutlined />} color="error"> Rejected </Tag>)}
                     </TableCell>
 
                     <TableCell align="center">
@@ -127,17 +127,27 @@ function Row(props) {
                             <EditIcon />
                         </IconButton>
                         <IconButton onClick={generatePDF} color="primary" aria-label="download">
-                        <FileDownloadIcon />
-                    </IconButton>
+                            <FileDownloadIcon />
+                        </IconButton>
                     </TableCell>
                 </TableRow>
                 <TableRow>
                     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
                         <Collapse in={open} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
-                                <Typography variant="h6" gutterBottom>
+                                <Typography variant="h6" gutterBottom className='fw-bold'>
                                     Order Details
                                 </Typography>
+                                <Typography>Custmer Id : {row.cusId}</Typography>
+                                <Typography>Status : 
+                                    {row?.status === 'Processing' && (<Tag icon={<SyncOutlined spin />} color="processing">Processing </Tag>)}
+                                    {row?.status === 'Delivering' && (<Tag icon={<SyncOutlined spin />} color="pink">Delivering</Tag>)}
+                                    {row?.status === 'Delivered' && (<Tag icon={<CheckCircleOutlined />} color="success">Delivered </Tag>)}
+                                    {row?.status === 'Rejected' && (<Tag icon={<CloseCircleOutlined />} color="error"> Rejected </Tag>)}
+                                </Typography>
+                                <hr />
+
+                                <br />
                                 <Table size="small" aria-label="order details" className='bg-body-tertiary'>
                                     <TableHead>
                                         <TableRow>
@@ -170,6 +180,7 @@ function Row(props) {
                                         ))}
                                     </TableBody>
                                 </Table>
+                                <br />
                             </Box>
                         </Collapse>
                     </TableCell>
@@ -234,7 +245,7 @@ function Row(props) {
                                         { value: 'Processing', label: 'Processing' },
                                         { value: 'Delivering', label: 'Delivering' },
                                         { value: 'Delivered', label: 'Delivered' },
-                                        { value: 'Rejected', label: 'Rejected' },
+                                        // { value: 'Rejected', label: 'Rejected' },
                                     ]}
                                 />
                             </td>
